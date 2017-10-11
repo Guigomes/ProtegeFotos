@@ -8,11 +8,9 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:supportsRtl="true"
         android:label="Protege Fotos"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        >
-
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +31,15 @@
             android:label="@string/title_activity_galeria"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SpacePhotoActivity" />
-        <activity android:name=".GlideActivity"></activity>
+        <activity android:name=".GlideActivity" />
+        <activity
+            android:name=".CriarPastaActivity"
+            android:label="@string/title_activity_criar_pasta"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".EscolherPastaActivity"
+            android:label="@string/title_activity_escolher_pasta"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>

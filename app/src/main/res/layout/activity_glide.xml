@@ -24,6 +24,16 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_images"
+        android:layout_below="@id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/txt_pasta_vazia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Você não possui nenhuma foto nessa pasta"
+        android:layout_below="@id/my_toolbar"
+        android:visibility="gone"
+        />
 </RelativeLayout>

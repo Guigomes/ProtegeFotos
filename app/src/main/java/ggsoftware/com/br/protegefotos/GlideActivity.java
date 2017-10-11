@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -27,8 +29,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import ggsoftware.com.br.protegefotos.dao.ImageDAO;
+import ggsoftware.com.br.protegefotos.dao.ImagemVO;
 
 public class GlideActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
@@ -44,9 +48,14 @@ public class GlideActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
 
+        ImageDAO imagemDAO = new ImageDAO(GlideActivity.this);
+        List<ImagemVO> listaImagens = imagemDAO.carregaDados();
+        if(listaImagens.size() == 0){
+            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.VISIBLE);
+        }
+            ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(GlideActivity.this));
+            recyclerView.setAdapter(adapter);
 
-        ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(GlideActivity.this));
-        recyclerView.setAdapter(adapter);
 
     }
 
@@ -65,48 +74,15 @@ public class GlideActivity extends AppCompatActivity {
 
 
             case PICK_IMAGE:
-             //
-
 
                 ClipData clipData = imageReturnedIntent.getClipData();
                 if (clipData != null) {
-                    for (int i = 0; i < clipData.getItemCount(); i++) {
-                        ClipData.Item item = clipData.getItemAt(i);
-                        Uri uri = item.getUri();
 
-                        try {
-                            String filename = queryName(getContentResolver(), uri);
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-
-
-                            ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
-                            ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
-                            imageSaver.save(bitmap, filename);
-                            imageDAO.insereDado(filename, "images");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(getApplicationContext(), "Imagens salvas com sucesso", Toast.LENGTH_SHORT).show();
-
-
-                    }
+                    new SalvarImagens().execute(clipData);
                 }else{
                     Uri selectedImage = imageReturnedIntent.getData();
 
-                    try {
-                        String filename = queryName(getContentResolver(), selectedImage);
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-
-
-                        ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
-                        ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
-                        imageSaver.save(bitmap, filename);
-                        imageDAO.insereDado(filename, "images");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(getApplicationContext(), "Imagem salva com sucesso", Toast.LENGTH_SHORT).show();
-
+                    new SalvarImagem().execute(selectedImage);
                 }
 
 
@@ -152,7 +128,7 @@ public class GlideActivity extends AppCompatActivity {
           ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
             File file = imageSaver.loadFile(spacePhoto.getUrl(), spacePhoto.getTitle());
 
-            Log.i("FOTOS", file.getAbsolutePath());
+
             Glide.with(mContext)
                     .load(file.getAbsolutePath())
                     .asBitmap()
@@ -196,6 +172,68 @@ public class GlideActivity extends AppCompatActivity {
         public ImageGalleryAdapter(Context context, SpacePhoto[] spacePhotos) {
             mContext = context;
             mSpacePhotos = spacePhotos;
+
+        }
+    }
+    private class SalvarImagem extends AsyncTask<Uri, Void, Boolean> {
+        protected Boolean doInBackground(Uri... uri) {
+
+                Uri selectedImage = uri[0];
+
+                try {
+                    String filename = queryName(getContentResolver(), selectedImage);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(GlideActivity.this.getContentResolver(), selectedImage);
+                    ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
+                    ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
+                    imageSaver.save(bitmap, filename);
+                    imageDAO.insereDado(filename, "images");
+                    return true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+        }
+        protected void onPostExecute(Boolean result) {
+            if(result) {
+                Toast.makeText(getApplicationContext(), "Imagem salva com sucesso", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getApplicationContext(), "Falha ao salvar imagem", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class SalvarImagens extends AsyncTask<ClipData, Void, Boolean> {
+        protected Boolean doInBackground(ClipData... clipdatas) {
+            ClipData clipData = clipdatas[0];
+
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    Uri uri = item.getUri();
+
+                    try {
+                        String filename = queryName(getContentResolver(), uri);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(GlideActivity.this.getContentResolver(), uri);
+
+
+                        ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
+                        ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
+                        imageSaver.save(bitmap, filename);
+                        imageDAO.insereDado(filename, "images");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+
+                        return false;
+                    }
+
+
+                }
+            return true;
+        }
+
+
+        protected void onPostExecute(Boolean result) {
+            Toast.makeText(getApplicationContext(), "Imagens salvas com sucesso", Toast.LENGTH_SHORT).show();
 
         }
     }

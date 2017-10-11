@@ -12,6 +12,14 @@ public class CriaBanco  extends SQLiteOpenHelper {
 
     public static final String NOME_BANCO = "protegefotos.db";
     public static final String TABELA = "imagens";
+    public static final String TABELA_PASTA = "pasta";
+
+    public static final String NOME_PASTA = "nome_pasta";
+
+    public static final String TIMESTAMP_CRIACAO_PASTA = "timestamp_criacao_pasta";
+
+    public static final String SENHA_PASTA = "senha_pasta";
+
     public static final String ID = "id";
     public static final String NOME = "nome";
     public static final String DIRETORIO = "diretorio";
@@ -29,7 +37,20 @@ public class CriaBanco  extends SQLiteOpenHelper {
                 + NOME + " text,"
                 + DIRETORIO + " text"
                 +")";
+
+
+        String sql2 = "CREATE TABLE "+TABELA_PASTA+"("
+                + ID + " integer primary key autoincrement,"
+                + NOME_PASTA + " text,"
+                + TIMESTAMP_CRIACAO_PASTA + " text,"
+
+                + SENHA_PASTA + " text"
+
+                +")";
         db.execSQL(sql);
+        db.execSQL(sql2);
+
+
     }
 
     @Override
