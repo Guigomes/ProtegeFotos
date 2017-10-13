@@ -19,10 +19,12 @@ public class SampleSetPatternActivity extends SetPatternActivity {
         String patternSha1 = PatternUtils.patternToSha1String(pattern);
 
         int idPasta = SetPatternActivity.idPasta;
+        String nomePasta = SetPatternActivity.nomePasta;
 
         Intent intent = new Intent();
         intent.putExtra("idPasta", idPasta);
         intent.putExtra("pattern", patternSha1);
+        intent.putExtra("nomePasta", nomePasta);
 
         setResult(RESULT_OK, intent);
         finish();//finishing activity

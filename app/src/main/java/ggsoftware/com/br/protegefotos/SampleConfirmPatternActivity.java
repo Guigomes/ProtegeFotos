@@ -21,12 +21,10 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
     }
     @Override
     protected boolean isPatternCorrect(List<PatternView.Cell> pattern) {
-        // TODO: Get saved pattern sha1.
-
-        //   String patternSha1 = MainActivity.getPadrao();
 
 
-        String patternSha1 = "";
+           String patternSha1 = ConfirmPatternActivity.pastaVO.getSenhaPasta();
+
         return TextUtils.equals(PatternUtils.patternToSha1String(pattern), patternSha1);
     }
 

@@ -70,13 +70,38 @@ public class PastaDAO {
         PastaVO pastaVO = new PastaVO();
         Cursor rs;
         String[] campos = {banco.ID, banco.NOME_PASTA, banco.TIMESTAMP_CRIACAO_PASTA, banco.SENHA_PASTA};
-        String where = "id = ?";
+        String where = banco.ID + " = ?";
         String[] argumentos = {String.valueOf(idPasta)};
         db = banco.getReadableDatabase();
         rs = db.query(banco.TABELA_PASTA, campos, where, argumentos, null, null, null, null);
 
         while (rs.moveToNext()) {
 
+            pastaVO.setId(rs.getInt(rs.getColumnIndex(CriaBanco.ID)));
+            pastaVO.setNomePasta(rs.getString(rs.getColumnIndex(CriaBanco.NOME_PASTA)));
+            pastaVO.setTimestampCriacaoPasta(rs.getString(rs.getColumnIndex(CriaBanco.TIMESTAMP_CRIACAO_PASTA)));
+            pastaVO.setSenhaPasta(rs.getString(rs.getColumnIndex(CriaBanco.SENHA_PASTA)));
+
+
+        }
+        rs.close();
+        db.close();
+
+        return pastaVO;
+    }
+
+    public PastaVO buscarPorNome(String nomePasta) {
+
+        PastaVO pastaVO = null;
+        Cursor rs;
+        String[] campos = {banco.ID, banco.NOME_PASTA, banco.TIMESTAMP_CRIACAO_PASTA, banco.SENHA_PASTA};
+        String where = banco.NOME_PASTA + " = ?";
+        String[] argumentos = {nomePasta};
+        db = banco.getReadableDatabase();
+        rs = db.query(banco.TABELA_PASTA, campos, where, argumentos, null, null, null, null);
+
+        while (rs.moveToNext()) {
+            pastaVO = new PastaVO();
             pastaVO.setId(rs.getInt(rs.getColumnIndex(CriaBanco.ID)));
             pastaVO.setNomePasta(rs.getString(rs.getColumnIndex(CriaBanco.NOME_PASTA)));
             pastaVO.setTimestampCriacaoPasta(rs.getString(rs.getColumnIndex(CriaBanco.TIMESTAMP_CRIACAO_PASTA)));

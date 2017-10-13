@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,39 +34,64 @@ import java.util.List;
 
 import ggsoftware.com.br.protegefotos.dao.ImageDAO;
 import ggsoftware.com.br.protegefotos.dao.ImagemVO;
+import ggsoftware.com.br.protegefotos.dao.PastaDAO;
+import ggsoftware.com.br.protegefotos.dao.PastaVO;
+import me.zhanghai.android.patternlock.ConfirmPatternActivity;
 
 public class GlideActivity extends AppCompatActivity {
+    RecyclerView recyclerView;
     private static final int PICK_IMAGE = 1;
+    PastaVO pastaSelecionada;
+    List<ImagemVO> listaImagens;
+    ImageDAO imagemDAO;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glide);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+
+        pastaSelecionada = ConfirmPatternActivity.pastaVO;
+
+        if (pastaSelecionada == null) {
+            PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
+            String nomePasta = (String) getIntent().getExtras().get("nomePasta");
+
+            pastaSelecionada = pastaDAO.buscarPorNome(nomePasta);
+        }
+
+        myToolbar.setTitle(pastaSelecionada.getNomePasta());
         setSupportActionBar(myToolbar);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_images);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_images);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
 
-        ImageDAO imagemDAO = new ImageDAO(GlideActivity.this);
-        List<ImagemVO> listaImagens = imagemDAO.carregaDados();
-        if(listaImagens.size() == 0){
+         imagemDAO = new ImageDAO(GlideActivity.this);
+
+
+        listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
+        if (listaImagens.size() == 0) {
             ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.VISIBLE);
+        } else {
+            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.GONE);
         }
-            ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(GlideActivity.this));
-            recyclerView.setAdapter(adapter);
+        ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(listaImagens));
+        recyclerView.setAdapter(adapter);
 
 
     }
 
-    public void addImagem(View v){
+    public void addImagem(View v) {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
+
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
@@ -77,23 +103,21 @@ public class GlideActivity extends AppCompatActivity {
 
                 ClipData clipData = imageReturnedIntent.getClipData();
                 if (clipData != null) {
+                    spinner.setVisibility(View.VISIBLE);
 
                     new SalvarImagens().execute(clipData);
-                }else{
+                } else {
                     Uri selectedImage = imageReturnedIntent.getData();
+                    spinner.setVisibility(View.VISIBLE);
 
                     new SalvarImagem().execute(selectedImage);
                 }
 
 
-
-
-
-
-
         }
 
     }
+
     private String queryName(ContentResolver resolver, Uri uri) {
         Cursor returnCursor =
                 resolver.query(uri, null, null, null, null);
@@ -104,7 +128,6 @@ public class GlideActivity extends AppCompatActivity {
         returnCursor.close();
         return name;
     }
-
 
 
     private class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder> {
@@ -125,8 +148,8 @@ public class GlideActivity extends AppCompatActivity {
             SpacePhoto spacePhoto = mSpacePhotos[position];
             ImageView imageView = holder.mPhotoImageView;
 
-          ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
-            File file = imageSaver.loadFile(spacePhoto.getUrl(), spacePhoto.getTitle());
+            ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
+            File file = imageSaver.loadFile(spacePhoto.getTitle());
 
 
             Glide.with(mContext)
@@ -175,30 +198,38 @@ public class GlideActivity extends AppCompatActivity {
 
         }
     }
+
     private class SalvarImagem extends AsyncTask<Uri, Void, Boolean> {
         protected Boolean doInBackground(Uri... uri) {
 
-                Uri selectedImage = uri[0];
+            Uri selectedImage = uri[0];
 
-                try {
-                    String filename = queryName(getContentResolver(), selectedImage);
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(GlideActivity.this.getContentResolver(), selectedImage);
-                    ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
-                    ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
-                    imageSaver.save(bitmap, filename);
-                    imageDAO.insereDado(filename, "images");
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            try {
+                String filename = queryName(getContentResolver(), selectedImage);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(GlideActivity.this.getContentResolver(), selectedImage);
+                ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
+                ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
+                imageSaver.save(bitmap, filename);
+                imageDAO.insereDado(filename, pastaSelecionada.getNomePasta());
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
+
         protected void onPostExecute(Boolean result) {
-            if(result) {
-                Toast.makeText(getApplicationContext(), "Imagem salva com sucesso", Toast.LENGTH_SHORT).show();
-            }else{
+
+            if (result) {
+                listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
+                ImageGalleryAdapter adapter = new ImageGalleryAdapter(GlideActivity.this, SpacePhoto.getSpacePhotos(listaImagens));
+                recyclerView.setAdapter(adapter);
+
+            } else {
                 Toast.makeText(getApplicationContext(), "Falha ao salvar imagem", Toast.LENGTH_SHORT).show();
             }
+            spinner.setVisibility(View.GONE);
+
         }
     }
 
@@ -206,34 +237,40 @@ public class GlideActivity extends AppCompatActivity {
         protected Boolean doInBackground(ClipData... clipdatas) {
             ClipData clipData = clipdatas[0];
 
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    ClipData.Item item = clipData.getItemAt(i);
-                    Uri uri = item.getUri();
+            for (int i = 0; i < clipData.getItemCount(); i++) {
+                ClipData.Item item = clipData.getItemAt(i);
+                Uri uri = item.getUri();
 
-                    try {
-                        String filename = queryName(getContentResolver(), uri);
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(GlideActivity.this.getContentResolver(), uri);
-
-
-                        ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
-                        ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
-                        imageSaver.save(bitmap, filename);
-                        imageDAO.insereDado(filename, "images");
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-
-                        return false;
-                    }
+                try {
+                    String filename = queryName(getContentResolver(), uri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(GlideActivity.this.getContentResolver(), uri);
 
 
+                    ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
+                    ImageDAO imageDAO = new ImageDAO(GlideActivity.this);
+                    imageSaver.save(bitmap, filename);
+                    imageDAO.insereDado(filename, pastaSelecionada.getNomePasta());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    return false;
                 }
+
+
+            }
             return true;
         }
 
 
         protected void onPostExecute(Boolean result) {
-            Toast.makeText(getApplicationContext(), "Imagens salvas com sucesso", Toast.LENGTH_SHORT).show();
+
+            listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
+            ImageGalleryAdapter adapter = new ImageGalleryAdapter(GlideActivity.this, SpacePhoto.getSpacePhotos(listaImagens));
+            recyclerView.setAdapter(adapter);
+
+            spinner.setVisibility(View.GONE);
+
 
         }
     }

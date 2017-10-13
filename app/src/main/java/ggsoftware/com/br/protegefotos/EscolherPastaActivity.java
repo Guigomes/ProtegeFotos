@@ -1,19 +1,32 @@
 package ggsoftware.com.br.protegefotos;
 
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ggsoftware.com.br.protegefotos.dao.PastaDAO;
 import ggsoftware.com.br.protegefotos.dao.PastaVO;
+import me.zhanghai.android.patternlock.ConfirmPatternActivity;
 
-public class EscolherPastaActivity extends ListActivity {
+public class EscolherPastaActivity extends AppCompatActivity {
+
+    private String m_Text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +34,49 @@ public class EscolherPastaActivity extends ListActivity {
         setContentView(R.layout.activity_escolher_pasta);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // setSupportActionBar(toolbar);
+        final List<String> nomePastas;
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(EscolherPastaActivity.this);
+                builder.setTitle(getString(R.string.txt_informe_nome_pasta));
+
+
+                final EditText input = new EditText(EscolherPastaActivity.this);
+
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+                builder.setPositiveButton(getString(R.string.btn_criar_pasta), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        m_Text = input.getText().toString();
+
+                        Intent it = new Intent(EscolherPastaActivity.this, SampleSetPatternActivity.class);
+
+                        it.putExtra("idPasta", -1);
+                        it.putExtra("nomePasta", m_Text);
+                        startActivityForResult(it, MainActivity.CRIAR_NOVA_SENHA);
+                    }
+                });
+
+                builder.setNegativeButton(getString(R.string.btn_cancelar), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+                /*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Action", null).show();*/
             }
         });
 
@@ -35,21 +84,74 @@ public class EscolherPastaActivity extends ListActivity {
 
         List<PastaVO> pastas = pastaDAO.listarPastas();
 
-        List<String> nomePastas = new ArrayList();
+        ListView listaPastas = (ListView) findViewById(R.id.lista_pastas);
+
+        nomePastas = new ArrayList();
 
         for (PastaVO pasta : pastas) {
             nomePastas.add(pasta.getNomePasta());
         }
 
-        nomePastas.add("Safari");
-        nomePastas.add("Camera");
-        nomePastas.add("FireFox");
-        nomePastas.add("Android");
 
-
-        setListAdapter(new ArrayAdapter<String>(
+        listaPastas.setAdapter(new ArrayAdapter<String>(
                 this, R.layout.item_list,
                 R.id.Itemname, nomePastas));
+
+        listaPastas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String nomePastaEscolhida = nomePastas.get(position);
+
+                Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
+                it.putExtra("nomePasta", nomePastaEscolhida);
+                startActivityForResult(it, MainActivity.CONFERIR_SENHA);
+
+            }
+        });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK && requestCode == MainActivity.CRIAR_NOVA_SENHA) {
+
+            String nomePasta = (String) data.getExtras().get("nomePasta");
+            String pattern = (String) data.getExtras().get("pattern");
+
+
+            PastaDAO pastaDAO = new PastaDAO(EscolherPastaActivity.this);
+            PastaVO pastaVO = pastaDAO.buscarPorNome(nomePasta);
+            if (pastaVO == null) {
+                boolean sucesso = pastaDAO.salvarPasta(nomePasta, pattern);
+
+
+                if (sucesso) {
+                    Toast.makeText(EscolherPastaActivity.this, getString(R.string.msg_sucesso_criar_pasta), Toast.LENGTH_SHORT).show();
+                    Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
+                    it.putExtra("nomePasta", nomePasta);
+                    startActivity(it);
+                    finish();
+
+                } else {
+                    Toast.makeText(EscolherPastaActivity.this, getString(R.string.msg_erro_criar_pasta), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(EscolherPastaActivity.this, getString(R.string.msg_pasta_repetida), Toast.LENGTH_SHORT).show();
+
+            }
+
+
+        } else if (resultCode == RESULT_OK && requestCode == MainActivity.CONFERIR_SENHA) {
+
+
+
+            Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
+
+            startActivity(it);
+
+
+        }
+    }
+
 
 }

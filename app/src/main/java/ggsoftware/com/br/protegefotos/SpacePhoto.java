@@ -76,10 +76,8 @@ public class SpacePhoto implements Parcelable {
         mTitle = title;
     }
 
-    public static  SpacePhoto[] getSpacePhotos(Context context) {
+    public static  SpacePhoto[] getSpacePhotos(  List<ImagemVO> imagens) {
 
-        ImageDAO imageDAO = new ImageDAO(context);
-        List<ImagemVO> imagens = imageDAO.carregaDados();
 
         SpacePhoto[] photos = new SpacePhoto[imagens.size()];
         int i = 0;

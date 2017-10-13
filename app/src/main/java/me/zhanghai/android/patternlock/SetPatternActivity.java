@@ -24,6 +24,7 @@ public class SetPatternActivity extends BasePatternActivity
         implements PatternView.OnPatternListener {
 
 
+    public static String nomePasta;
     public static int idPasta;
 
     private enum LeftButtonState {
@@ -117,6 +118,7 @@ public class SetPatternActivity extends BasePatternActivity
         });
 
         idPasta = (int) getIntent().getExtras().get("idPasta");
+        nomePasta = (String) getIntent().getExtras().get("nomePasta");
 
 
         if (savedInstanceState == null) {
@@ -238,10 +240,13 @@ public class SetPatternActivity extends BasePatternActivity
         if (mStage == Stage.DrawTooShort) {
             mMessageText.setText(getString(mStage.messageId, mMinPatternSize));
         } else if (mStage == Stage.Draw) {
-            String nomePasta = null;
             if (idPasta == 0) {
                 nomePasta = getString(R.string.txt_pasta_principal);
-            } else {
+            }
+            String mensagem = getString(mStage.messageId, nomePasta);
+            mMessageText.setText(mensagem);
+/*
+            else {
 
                 PastaDAO pastaDAO = new PastaDAO(SetPatternActivity.this);
                 PastaVO pastaVO = pastaDAO.buscarPorId(idPasta);
@@ -249,8 +254,8 @@ public class SetPatternActivity extends BasePatternActivity
                     nomePasta = pastaVO.getNomePasta();
                 }
             }
-            String mensagem = getString(mStage.messageId, nomePasta);
-            mMessageText.setText(mensagem);
+
+            }*/
         } else {
             mMessageText.setText(mStage.messageId);
         }

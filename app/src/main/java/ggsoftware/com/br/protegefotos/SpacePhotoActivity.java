@@ -33,7 +33,7 @@ public class SpacePhotoActivity extends AppCompatActivity {
          spacePhoto = getIntent().getParcelableExtra(EXTRA_SPACE_PHOTO);
 
         ImageSaver imageSaver = new ImageSaver(SpacePhotoActivity.this);
-        File file = imageSaver.loadFile(spacePhoto.getUrl(), spacePhoto.getTitle());
+        File file = imageSaver.loadFile(spacePhoto.getTitle());
 
 
         Glide.with(this)
@@ -54,7 +54,7 @@ for(int i = 0;i< fotos.length; i++){
             spacePhoto = fotos[0];
         }
         ImageSaver imageSaver = new ImageSaver(SpacePhotoActivity.this);
-        File file = imageSaver.loadFile(spacePhoto.getUrl(), spacePhoto.getTitle());
+        File file = imageSaver.loadFile(spacePhoto.getTitle());
 
 
         Glide.with(this)

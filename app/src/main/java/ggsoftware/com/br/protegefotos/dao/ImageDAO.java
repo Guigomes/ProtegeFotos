@@ -61,5 +61,29 @@ public class ImageDAO {
 
         return listaImagens;
     }
+
+    public List<ImagemVO> listarPorPasta(String nomePasta) {
+        List<ImagemVO> listaImagens = new ArrayList<>();
+        Cursor rs;
+        String[] campos =  {banco.ID,banco.NOME, banco.DIRETORIO};
+        db = banco.getReadableDatabase();
+
+        String where = banco.DIRETORIO + " = ?";
+        String[] argumentos = {nomePasta};
+        rs = db.query(banco.TABELA, campos, where, argumentos, null, null, null, null);
+        while (rs.moveToNext()) {
+            ImagemVO imagemVO = new ImagemVO();
+            imagemVO.setId(rs.getInt(rs.getColumnIndex(CriaBanco.ID)));
+            imagemVO.setNome(rs.getString(rs.getColumnIndex(CriaBanco.NOME)));
+            imagemVO.setDiretorio(rs.getString(rs.getColumnIndex(CriaBanco.DIRETORIO)));
+
+
+            listaImagens.add(imagemVO);
+        }
+        rs.close();
+        db.close();
+
+        return listaImagens;
+    }
 }
 

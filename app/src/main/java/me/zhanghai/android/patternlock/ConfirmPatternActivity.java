@@ -11,6 +11,8 @@ import android.view.View;
 import java.util.List;
 
 import ggsoftware.com.br.protegefotos.R;
+import ggsoftware.com.br.protegefotos.dao.PastaDAO;
+import ggsoftware.com.br.protegefotos.dao.PastaVO;
 
 // For AOSP implementations, see:
 // https://android.googlesource.com/platform/packages/apps/Settings/+/master/src/com/android/settings/ConfirmLockPattern.java
@@ -23,16 +25,26 @@ public class ConfirmPatternActivity extends BasePatternActivity
 
     public static final int RESULT_FORGOT_PASSWORD = RESULT_FIRST_USER;
 
+    public static PastaVO pastaVO;
+
     protected int mNumFailedAttempts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMessageText.setText(R.string.pl_draw_pattern_to_unlock);
+        String nomePasta = (String) getIntent().getExtras().get("nomePasta");
+
+        PastaDAO pastaDAO = new PastaDAO(ConfirmPatternActivity.this);
+
+         pastaVO = pastaDAO.buscarPorNome(nomePasta);
+
+
+        mMessageText.setText(getString(R.string.msg_confirmar_padrao, pastaVO.getNomePasta()));
+
         mPatternView.setInStealthMode(isStealthModeEnabled());
         mPatternView.setOnPatternListener(this);
-        mLeftButton.setText(R.string.pl_cancel);
+        mLeftButton.setText(getString(R.string.btn_cancelar));
         mLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

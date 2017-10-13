@@ -107,8 +107,8 @@ public class ImageSaver {
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
-    public File loadFile(String diretorio, String filename) {
-        File file = createFile2(diretorio, filename);
+    public File loadFile(String filename) {
+        File file = createFile2(directoryName, filename);
         return file;
     }
     public Bitmap load() {
