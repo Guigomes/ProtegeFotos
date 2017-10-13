@@ -1,87 +1,107 @@
 package ggsoftware.com.br.protegefotos;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-
-import java.util.Calendar;
 import java.util.List;
 
 import ggsoftware.com.br.protegefotos.dao.PastaDAO;
 import ggsoftware.com.br.protegefotos.dao.PastaVO;
 
 
-public class MainActivity extends AppCompatActivity   {
+public class MainActivity extends AppCompatActivity {
 
-    static SharedPreferences sharedPreferences;
+    public static int CRIAR_NOVA_SENHA = 200;
+    public static int CONFERIR_SENHA = 100;
+
+    //static SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
-
-        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-
-        String padrao = getPadrao();
         PastaDAO pastaDAO = new PastaDAO(MainActivity.this);
 
         List<PastaVO> listaPastas = pastaDAO.listarPastas();
 
-        if(listaPastas.size() == 0){
+//        setContentView(R.layout.activity_main);
+/*
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+
+        String padrao = getPadrao();
+  */
+
+        if (listaPastas.size() == 0) {
             Intent it = new Intent(MainActivity.this,
                     SampleSetPatternActivity.class);
-            startActivityForResult(it, 200);
-        }else{
 
-            if (padrao == null) {
+            int idPasta = 0;
 
-                Intent it = new Intent(MainActivity.this,
-                        SampleSetPatternActivity.class);
-                startActivityForResult(it, 200);
+            it.putExtra("idPasta", idPasta);
+            startActivityForResult(it, CRIAR_NOVA_SENHA);
+        } else if (listaPastas.size() == 1) {
+            PastaVO pasta = listaPastas.get(0);
 
-            } else {
+            int idPasta = pasta.getId();
 
-                Intent it = new Intent(MainActivity.this,
-                        SampleConfirmPatternActivity.class);
+            Intent it = new Intent(MainActivity.this,
+                    SampleConfirmPatternActivity.class);
 
-                startActivityForResult(it, 100);
+            it.putExtra("idPasta", idPasta);
 
-            }        }
+            startActivityForResult(it, CONFERIR_SENHA);
+        } else {
+
+            startActivity(new Intent(MainActivity.this, EscolherPastaActivity.class));
+
+        }
 
     }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (resultCode == RESULT_OK && requestCode == 200) {
-            boolean sucesso = new PastaDAO(MainActivity.this).salvarPasta("Principal", MainActivity.getPadrao());
-if(sucesso){
-    Toast.makeText(this, "Pasta criada com sucesso", Toast.LENGTH_SHORT).show();
-}
+        if (resultCode == RESULT_OK && requestCode == CRIAR_NOVA_SENHA) {
+
+            int idPasta = (int) data.getExtras().get("idPasta");
+            String pattern = (String) data.getExtras().get("pattern");
+
+            if (idPasta == 0) {
+                String nomePasta = getString(R.string.txt_pasta_principal);
+
+                PastaDAO pastaDAO = new PastaDAO(MainActivity.this);
+
+                boolean sucesso = pastaDAO.salvarPasta(nomePasta, pattern);
+
+                if (sucesso) {
+                    Toast.makeText(MainActivity.this, getString(R.string.msg_sucesso_criar_pasta), Toast.LENGTH_SHORT).show();
+                    Intent it = new Intent(MainActivity.this, GlideActivity.class);
+                    startActivity(it);
+                    finish();
+
+                } else {
+                    Toast.makeText(MainActivity.this, getString(R.string.msg_erro_criar_pasta), Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+
+
+        } else if (resultCode == RESULT_OK && requestCode == CONFERIR_SENHA) {
+
+
             Intent it = new Intent(MainActivity.this, GlideActivity.class);
             startActivity(it);
             finish();
 
-        }
-        else if (resultCode == RESULT_OK && requestCode == 100) {
-
-
-            Intent it = new Intent(MainActivity.this, GlideActivity.class);
-            startActivity(it);
-            finish();
-
-        }
-        else if(resultCode == RESULT_CANCELED){
+        } else if (resultCode == RESULT_CANCELED) {
             finish();
         }
     }
 
+    /*
     public static String getPadrao() {
 
         return sharedPreferences.getString("padrao", null);
@@ -95,6 +115,6 @@ if(sucesso){
         editor.commit();
 
     }
-
+*/
 
 }

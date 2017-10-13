@@ -46,6 +46,7 @@ public class PastaDAO {
         List<PastaVO> listaPastas = new ArrayList<>();
         Cursor rs;
         String[] campos =  {banco.ID,banco.NOME_PASTA, banco.TIMESTAMP_CRIACAO_PASTA, banco.SENHA_PASTA};
+
         db = banco.getReadableDatabase();
         rs = db.query(banco.TABELA_PASTA, campos, null, null, null, null, null, null);
 
@@ -62,6 +63,31 @@ public class PastaDAO {
         db.close();
 
         return listaPastas;
+    }
+
+    public PastaVO buscarPorId(int idPasta) {
+
+        PastaVO pastaVO = new PastaVO();
+        Cursor rs;
+        String[] campos = {banco.ID, banco.NOME_PASTA, banco.TIMESTAMP_CRIACAO_PASTA, banco.SENHA_PASTA};
+        String where = "id = ?";
+        String[] argumentos = {String.valueOf(idPasta)};
+        db = banco.getReadableDatabase();
+        rs = db.query(banco.TABELA_PASTA, campos, where, argumentos, null, null, null, null);
+
+        while (rs.moveToNext()) {
+
+            pastaVO.setId(rs.getInt(rs.getColumnIndex(CriaBanco.ID)));
+            pastaVO.setNomePasta(rs.getString(rs.getColumnIndex(CriaBanco.NOME_PASTA)));
+            pastaVO.setTimestampCriacaoPasta(rs.getString(rs.getColumnIndex(CriaBanco.TIMESTAMP_CRIACAO_PASTA)));
+            pastaVO.setSenhaPasta(rs.getString(rs.getColumnIndex(CriaBanco.SENHA_PASTA)));
+
+
+        }
+        rs.close();
+        db.close();
+
+        return pastaVO;
     }
 }
 

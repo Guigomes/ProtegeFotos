@@ -1,20 +1,26 @@
 package ggsoftware.com.br.protegefotos;
 
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
-public class EscolherPastaActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+import ggsoftware.com.br.protegefotos.dao.PastaDAO;
+import ggsoftware.com.br.protegefotos.dao.PastaVO;
+
+public class EscolherPastaActivity extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_escolher_pasta);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -24,6 +30,26 @@ public class EscolherPastaActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        PastaDAO pastaDAO = new PastaDAO(EscolherPastaActivity.this);
+
+        List<PastaVO> pastas = pastaDAO.listarPastas();
+
+        List<String> nomePastas = new ArrayList();
+
+        for (PastaVO pasta : pastas) {
+            nomePastas.add(pasta.getNomePasta());
+        }
+
+        nomePastas.add("Safari");
+        nomePastas.add("Camera");
+        nomePastas.add("FireFox");
+        nomePastas.add("Android");
+
+
+        setListAdapter(new ArrayAdapter<String>(
+                this, R.layout.item_list,
+                R.id.Itemname, nomePastas));
     }
 
 }

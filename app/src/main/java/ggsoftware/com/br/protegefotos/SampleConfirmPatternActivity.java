@@ -1,6 +1,5 @@
 package ggsoftware.com.br.protegefotos;
 
-import android.content.Intent;
 import android.text.TextUtils;
 
 import java.util.List;
@@ -24,10 +23,10 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
     protected boolean isPatternCorrect(List<PatternView.Cell> pattern) {
         // TODO: Get saved pattern sha1.
 
-        String patternSha1 = MainActivity.getPadrao();
+        //   String patternSha1 = MainActivity.getPadrao();
 
 
-
+        String patternSha1 = "";
         return TextUtils.equals(PatternUtils.patternToSha1String(pattern), patternSha1);
     }
 

@@ -1,5 +1,7 @@
 package ggsoftware.com.br.protegefotos;
 
+import android.content.Intent;
+
 import java.util.List;
 
 import me.zhanghai.android.patternlock.PatternUtils;
@@ -16,7 +18,14 @@ public class SampleSetPatternActivity extends SetPatternActivity {
     protected void onSetPattern(List<PatternView.Cell> pattern) {
         String patternSha1 = PatternUtils.patternToSha1String(pattern);
 
+        int idPasta = SetPatternActivity.idPasta;
 
-        MainActivity.setPadrao(patternSha1);
+        Intent intent = new Intent();
+        intent.putExtra("idPasta", idPasta);
+        intent.putExtra("pattern", patternSha1);
+
+        setResult(RESULT_OK, intent);
+        finish();//finishing activity
+
     }
 }
