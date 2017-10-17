@@ -18,6 +18,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -45,6 +47,30 @@ public class GlideActivity extends AppCompatActivity {
     List<ImagemVO> listaImagens;
     ImageDAO imagemDAO;
     private ProgressBar spinner;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_galeria, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_add_imagem:
+                addImagem();
+
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+
+
+}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +110,7 @@ public class GlideActivity extends AppCompatActivity {
 
     }
 
-    public void addImagem(View v) {
+    public void addImagem() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);

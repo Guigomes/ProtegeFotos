@@ -1,6 +1,8 @@
 package ggsoftware.com.br.protegefotos;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public static int CRIAR_NOVA_SENHA = 200;
     public static int CONFERIR_SENHA = 100;
 
-    //static SharedPreferences sharedPreferences;
+    static SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 //        setContentView(R.layout.activity_main);
-/*
+
         sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 
-        String padrao = getPadrao();
-  */
-
-        if (listaPastas.size() == 0) {
+        if(MainActivity.isModoInvisivel()){
+            Intent it = new Intent(MainActivity.this, SampleConfirmPatternActivity.class);
+            startActivityForResult(it, CONFERIR_SENHA);
+        }else if (listaPastas.size() == 0) {
             Intent it = new Intent(MainActivity.this,
                     SampleSetPatternActivity.class);
 
@@ -80,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     it.putExtra("nomePasta", nomePasta);
 
                     startActivity(it);
-                    finish();
 
                 } else {
                     Toast.makeText(MainActivity.this, getString(R.string.msg_erro_criar_pasta), Toast.LENGTH_SHORT).show();
@@ -95,27 +96,27 @@ public class MainActivity extends AppCompatActivity {
 
             Intent it = new Intent(MainActivity.this, GlideActivity.class);
             startActivity(it);
-            finish();
+
 
         } else if (resultCode == RESULT_CANCELED) {
             finish();
         }
     }
 
-    /*
-    public static String getPadrao() {
 
-        return sharedPreferences.getString("padrao", null);
+      public static boolean isModoInvisivel() {
+
+        return sharedPreferences.getBoolean("isModoInvisivel", false);
 
     }
 
-    public static void setPadrao(String padrao) {
+    public static void setModoInvisivel(boolean isModoInvisivel) {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("padrao", padrao);
+        editor.putBoolean("isModoInvisivel", isModoInvisivel);
         editor.commit();
 
     }
-*/
+
 
 }

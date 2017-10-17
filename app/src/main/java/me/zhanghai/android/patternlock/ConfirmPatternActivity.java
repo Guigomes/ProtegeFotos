@@ -5,11 +5,14 @@
 
 package me.zhanghai.android.patternlock;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.List;
 
+import ggsoftware.com.br.protegefotos.MainActivity;
 import ggsoftware.com.br.protegefotos.R;
 import ggsoftware.com.br.protegefotos.dao.PastaDAO;
 import ggsoftware.com.br.protegefotos.dao.PastaVO;
@@ -28,19 +31,34 @@ public class ConfirmPatternActivity extends BasePatternActivity
     public static PastaVO pastaVO;
 
     protected int mNumFailedAttempts;
+    String nomePasta;
+
+    PastaDAO pastaDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        String nomePasta = (String) getIntent().getExtras().get("nomePasta");
-
-        PastaDAO pastaDAO = new PastaDAO(ConfirmPatternActivity.this);
-
-         pastaVO = pastaDAO.buscarPorNome(nomePasta);
 
 
-        mMessageText.setText(getString(R.string.msg_confirmar_padrao, pastaVO.getNomePasta()));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_pattern);
+        setSupportActionBar(toolbar);
+         pastaDAO = new PastaDAO(ConfirmPatternActivity.this);
+
+
+        if(MainActivity.isModoInvisivel()){
+            mMessageText.setText(getString(R.string.msg_confirmar_padrao_invisivel));
+        }else{
+            String nomePasta = (String) getIntent().getExtras().get("nomePasta");
+
+
+            pastaVO = pastaDAO.buscarPorNome(nomePasta);
+
+
+            mMessageText.setText(getString(R.string.msg_confirmar_padrao, pastaVO.getNomePasta()));
+        }
+
 
         mPatternView.setInStealthMode(isStealthModeEnabled());
         mPatternView.setOnPatternListener(this);

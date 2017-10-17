@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,12 +33,12 @@ public class EscolherPastaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_escolher_pasta);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar2);
+        setSupportActionBar(toolbar);
+
         final List<String> nomePastas;
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,6 +152,23 @@ public class EscolherPastaActivity extends AppCompatActivity {
 
 
         }
+    }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_pasta, menu);
+        return true;
+    }
+
+    public void ativarModoInvisivel(View v){
+        MainActivity.setModoInvisivel(true);
+
+        Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
+        it.putExtra("isModoInvisivel", true);
+        startActivity(it);
     }
 
 

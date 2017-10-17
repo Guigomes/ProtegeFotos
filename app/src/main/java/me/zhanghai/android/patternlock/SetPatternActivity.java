@@ -7,6 +7,7 @@ package me.zhanghai.android.patternlock;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -102,6 +103,8 @@ public class SetPatternActivity extends BasePatternActivity
         super.onCreate(savedInstanceState);
 
         mMinPatternSize = getMinPatternSize();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_pattern);
+        setSupportActionBar(toolbar);
 
         mPatternView.setOnPatternListener(this);
         mLeftButton.setOnClickListener(new View.OnClickListener() {

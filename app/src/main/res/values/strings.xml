@@ -45,4 +45,5 @@
     <string name="title_activity_criar_pasta">CriarPastaActivity</string>
     <string name="title_activity_escolher_pasta">EscolherPastaActivity</string>
     <string name="msg_pasta_repetida">Você já tem uma pasta com esse nome</string>
+    <string name="msg_confirmar_padrao_invisivel">Desenhe o padrão da pasta que deseja acessar</string>
 </resources>
