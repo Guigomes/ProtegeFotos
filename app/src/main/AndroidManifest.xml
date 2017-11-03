@@ -10,7 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Protege Fotos"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,14 +24,21 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SampleConfirmPatternActivity"
-            android:label="@string/title_activity_galeria"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/app_name"
+         />
         <activity
             android:name=".SampleSetPatternActivity"
             android:label="@string/title_activity_galeria"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SpacePhotoActivity" />
-        <activity android:name=".GlideActivity" />
+      />
+        <activity android:name=".SpacePhotoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+
+            >
+
+
+        </activity>
+        <activity android:name=".GlideActivity"
+            />
         <activity
             android:name=".CriarPastaActivity"
             android:label="@string/title_activity_criar_pasta"
@@ -39,7 +46,7 @@
         <activity
             android:name=".EscolherPastaActivity"
             android:label="@string/title_activity_escolher_pasta"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+         ></activity>
     </application>
 
 </manifest>

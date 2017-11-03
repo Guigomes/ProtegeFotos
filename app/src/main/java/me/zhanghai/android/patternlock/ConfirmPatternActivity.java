@@ -41,9 +41,10 @@ public class ConfirmPatternActivity extends BasePatternActivity
         super.onCreate(savedInstanceState);
 
 
-
+/*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_pattern);
         setSupportActionBar(toolbar);
+        */
          pastaDAO = new PastaDAO(ConfirmPatternActivity.this);
 
 

@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent it = new Intent(MainActivity.this, GlideActivity.class);
                     it.putExtra("nomePasta", nomePasta);
-
+                    finish();
                     startActivity(it);
 
                 } else {

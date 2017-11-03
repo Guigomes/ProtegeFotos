@@ -47,6 +47,8 @@ public class GlideActivity extends AppCompatActivity {
     List<ImagemVO> listaImagens;
     ImageDAO imagemDAO;
     private ProgressBar spinner;
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -76,7 +78,8 @@ public class GlideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glide);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+
+
         spinner = (ProgressBar)findViewById(R.id.progressBar1);
 
         pastaSelecionada = ConfirmPatternActivity.pastaVO;
@@ -88,8 +91,10 @@ public class GlideActivity extends AppCompatActivity {
             pastaSelecionada = pastaDAO.buscarPorNome(nomePasta);
         }
 
-        myToolbar.setTitle(pastaSelecionada.getNomePasta());
-        setSupportActionBar(myToolbar);
+        setTitle(pastaSelecionada.getNomePasta());
+
+
+
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
         recyclerView = (RecyclerView) findViewById(R.id.rv_images);
         recyclerView.setHasFixedSize(true);
@@ -107,6 +112,7 @@ public class GlideActivity extends AppCompatActivity {
         ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(listaImagens));
         recyclerView.setAdapter(adapter);
 
+        registerForContextMenu(recyclerView);
 
     }
 
@@ -177,6 +183,8 @@ public class GlideActivity extends AppCompatActivity {
             ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
             File file = imageSaver.loadFile(spacePhoto.getTitle());
 
+            holder.itemView.setLongClickable(true);
+
 
             Glide.with(mContext)
                     .load(file.getAbsolutePath())
@@ -191,7 +199,7 @@ public class GlideActivity extends AppCompatActivity {
             return (mSpacePhotos.length);
         }
 
-        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
             public ImageView mPhotoImageView;
 
@@ -200,7 +208,10 @@ public class GlideActivity extends AppCompatActivity {
                 super(itemView);
                 mPhotoImageView = (ImageView) itemView.findViewById(R.id.iv_photo);
                 itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
             }
+
+
 
             @Override
             public void onClick(View view) {
@@ -213,6 +224,14 @@ public class GlideActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
+
+            @Override
+            public boolean onLongClick(View view) {
+                    Toast.makeText(GlideActivity.this, "LONG CLICK", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+
         }
 
         private SpacePhoto[] mSpacePhotos;

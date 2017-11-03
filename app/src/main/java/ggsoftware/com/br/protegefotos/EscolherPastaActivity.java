@@ -33,8 +33,6 @@ public class EscolherPastaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_escolher_pasta);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar2);
-        setSupportActionBar(toolbar);
 
         final List<String> nomePastas;
 
@@ -147,7 +145,7 @@ public class EscolherPastaActivity extends AppCompatActivity {
 
 
             Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
-
+finish();
             startActivity(it);
 
 

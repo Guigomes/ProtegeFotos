@@ -103,9 +103,10 @@ public class SetPatternActivity extends BasePatternActivity
         super.onCreate(savedInstanceState);
 
         mMinPatternSize = getMinPatternSize();
+/*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_pattern);
         setSupportActionBar(toolbar);
-
+*/
         mPatternView.setOnPatternListener(this);
         mLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override

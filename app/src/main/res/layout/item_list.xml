@@ -12,12 +12,15 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:tint="@color/colorPrimary"
+        android:src="@mipmap/ic_folder_black_24dp" />
 
     <TextView
         android:id="@+id/Itemname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:paddingTop="5dp" />
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        />
 </LinearLayout>

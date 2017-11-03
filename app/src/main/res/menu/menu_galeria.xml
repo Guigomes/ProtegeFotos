@@ -13,7 +13,7 @@
         android:id="@+id/action_teste"
         android:orderInCategory="100"
         android:title="TESTE"
-        app:showAsAction="never" />
+               app:showAsAction="never" />
     <item
         android:id="@+id/action_add_imagem"
         android:orderInCategory="300"
