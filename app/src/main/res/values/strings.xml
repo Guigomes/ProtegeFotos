@@ -20,7 +20,7 @@
     <string name="txt_informe_nome_pasta">Qual será o nome da sua pasta?</string>
 
     <string name="btn_cancelar">Cancelar</string>
-    <string name="btn_criar_pasta">Criar Pastas</string>
+    <string name="btn_criar_pasta">Criar Pasta</string>
 
     <string name="pl_draw_pattern">Crie um padrão para a pasta %1$s</string>
     <string name="pl_draw_pattern_to_unlock">Desenhe o padrão para desbloquear</string>

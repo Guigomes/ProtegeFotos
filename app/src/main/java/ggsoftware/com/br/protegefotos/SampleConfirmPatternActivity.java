@@ -47,18 +47,21 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
 
         } else {
             String patternSha1 = ConfirmPatternActivity.pastaVO.getSenhaPasta();
-if(TextUtils.equals(PatternUtils.patternToSha1String(pattern), patternSha1)){
-    Intent it = new Intent(SampleConfirmPatternActivity.this, GlideActivity.class);
-    startActivity(it);
-}else{
-    return false;
-}
+            if (TextUtils.equals(PatternUtils.patternToSha1String(pattern), patternSha1)) {
+                Intent it = new Intent(SampleConfirmPatternActivity.this, GlideActivity.class);
+
+                    finish();
+
+
+                startActivity(it);
+            } else {
+                return false;
+            }
 
         }
         return false;
 
     }
-
 
 
     @Override

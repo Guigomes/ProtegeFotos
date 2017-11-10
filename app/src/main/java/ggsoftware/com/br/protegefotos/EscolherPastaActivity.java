@@ -3,6 +3,7 @@ package ggsoftware.com.br.protegefotos;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,6 +51,7 @@ public class EscolherPastaActivity extends AppCompatActivity {
                 final EditText input = new EditText(EscolherPastaActivity.this);
 
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setTextColor(Color.BLACK);
                 builder.setView(input);
 
                 builder.setPositiveButton(getString(R.string.btn_criar_pasta), new DialogInterface.OnClickListener() {
@@ -161,11 +164,29 @@ finish();
         return true;
     }
 
-    public void ativarModoInvisivel(View v){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_ativar_modo_invisivel:
+                ativarModoInvisivel();
+
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+
+    }
+
+
+    public void ativarModoInvisivel(){
         MainActivity.setModoInvisivel(true);
 
         Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
         it.putExtra("isModoInvisivel", true);
+        finish();
         startActivity(it);
     }
 

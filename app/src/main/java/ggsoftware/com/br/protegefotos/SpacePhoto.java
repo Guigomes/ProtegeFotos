@@ -21,6 +21,8 @@ public class SpacePhoto implements Parcelable {
 
     private String mUrl;
     private String mTitle;
+
+    private int selected;
     private int id;
 
     private static SpacePhoto[] fotos;
@@ -101,5 +103,24 @@ public class SpacePhoto implements Parcelable {
         parcel.writeString(mTitle);
         parcel.writeInt(id);
 
+        parcel.writeInt(selected);
+
+
+    }
+
+    public String getmUrl() {
+        return mUrl;
+    }
+
+    public void setmUrl(String mUrl) {
+        this.mUrl = mUrl;
+    }
+
+    public int getSelected() {
+        return selected;
+    }
+
+    public void setSelected(int selected) {
+        this.selected = selected;
     }
 }
