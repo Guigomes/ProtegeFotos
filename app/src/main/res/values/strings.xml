@@ -21,6 +21,7 @@
 
     <string name="btn_cancelar">Cancelar</string>
     <string name="btn_criar_pasta">Criar Pasta</string>
+    <string name="btn_alterar_senha">Alterar Senha</string>
 
     <string name="pl_draw_pattern">Crie um padrão para a pasta %1$s</string>
     <string name="pl_draw_pattern_to_unlock">Desenhe o padrão para desbloquear</string>

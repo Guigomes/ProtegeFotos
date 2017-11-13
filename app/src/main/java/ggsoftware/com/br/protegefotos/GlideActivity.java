@@ -38,6 +38,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import ggsoftware.com.br.protegefotos.dao.ImageDAO;
@@ -57,15 +58,16 @@ public class GlideActivity extends AppCompatActivity {
     private SpacePhoto[] mSpacePhotos;
     private Context mContext;
 
+    ArrayList<ImageGalleryAdapter.MyViewHolder> views = new ArrayList<>();
     boolean modoSelecao = false;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        if(MainActivity.isModoInvisivel()){
+        if (MainActivity.isModoInvisivel()) {
             getMenuInflater().inflate(R.menu.menu_galeria_modo_invisivel, menu);
-        }else{
+        } else {
             getMenuInflater().inflate(R.menu.menu_galeria, menu);
         }
 
@@ -83,6 +85,33 @@ public class GlideActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_excluir_imagem:
+
+
+                return true;
+
+            case R.id.action_cancelar_selecao:
+
+                for(SpacePhoto foto: mSpacePhotos){
+                    foto.setSelected(0);
+                }
+                int count = views.size();
+                for(int i=0; i<count; i++)
+                {
+                    ImageGalleryAdapter.MyViewHolder v = views.get(i);
+                    //call imageview from the viewholder object by the variable name used to instatiate it
+                    ImageView imageView1 = v.mPhotoImageView;
+                    ImageView imageView3 = v.mImageCheck;
+                    imageView3.setVisibility(View.INVISIBLE);
+                    imageView1.setPadding(0, 0, 0, 0);
+
+                }
+                modoSelecao = false;
+                GlideActivity.this.invalidateOptionsMenu();
+
+                return true;
+
+
             case R.id.action_new_folder:
                 AlertDialog.Builder builder = new AlertDialog.Builder(GlideActivity.this);
                 builder.setTitle(getString(R.string.txt_informe_nome_pasta));
@@ -97,7 +126,7 @@ public class GlideActivity extends AppCompatActivity {
                 builder.setPositiveButton(getString(R.string.btn_criar_pasta), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                      String  m_Text = input.getText().toString();
+                        String m_Text = input.getText().toString();
 
                         Intent it = new Intent(GlideActivity.this, SampleSetPatternActivity.class);
 
@@ -117,7 +146,6 @@ public class GlideActivity extends AppCompatActivity {
                 builder.show();
 
 
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -125,14 +153,38 @@ public class GlideActivity extends AppCompatActivity {
 
 
     }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (modoSelecao) {
+            menu.findItem(R.id.action_excluir_imagem).setVisible(true);
+            menu.findItem(R.id.action_cancelar_selecao).setVisible(true);
+
+            menu.findItem(R.id.action_add_imagem).setVisible(false);
+
+            menu.findItem(R.id.action_alterar_senha).setVisible(false);
+            if (MainActivity.isModoInvisivel()) {
+                menu.findItem(R.id.action_new_folder).setVisible(false);
+            }
+        } else {
+            menu.findItem(R.id.action_excluir_imagem).setVisible(false);
+            menu.findItem(R.id.action_cancelar_selecao).setVisible(false);
+            menu.findItem(R.id.action_add_imagem).setVisible(true);
+            menu.findItem(R.id.action_alterar_senha).setVisible(true);
+            if (MainActivity.isModoInvisivel()) {
+                menu.findItem(R.id.action_new_folder).setVisible(true);
+            }
+        }
+        return true;
+    }
+
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         super.onBackPressed();
 
-        if(MainActivity.isModoInvisivel()){
-         Intent it = new Intent(GlideActivity.this, SampleConfirmPatternActivity.class);
+        if (MainActivity.isModoInvisivel()) {
+            Intent it = new Intent(GlideActivity.this, SampleConfirmPatternActivity.class);
             startActivity(it);
-        }else {
+        } else {
             finish();
         }
     }
@@ -151,17 +203,17 @@ public class GlideActivity extends AppCompatActivity {
         spinner = (ProgressBar) findViewById(R.id.progressBar1);
 
         String nomePasta = null;
-if(getIntent().getExtras() != null) {
+        if (getIntent().getExtras() != null) {
 
-    nomePasta = (String) getIntent().getExtras().get("nomePasta");
-}
-        if(nomePasta != null){
+            nomePasta = (String) getIntent().getExtras().get("nomePasta");
+        }
+        if (nomePasta != null) {
             PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
             pastaSelecionada = pastaDAO.buscarPorNome(nomePasta);
-            if(pastaSelecionada == null){
+            if (pastaSelecionada == null) {
                 pastaSelecionada = ConfirmPatternActivity.pastaVO;
             }
-        }else{
+        } else {
             pastaSelecionada = ConfirmPatternActivity.pastaVO;
         }
 
@@ -186,6 +238,8 @@ if(getIntent().getExtras() != null) {
         recyclerView.setAdapter(adapter);
 
         registerForContextMenu(recyclerView);
+
+
 
     }
 
@@ -273,6 +327,8 @@ if(getIntent().getExtras() != null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             View photoView = inflater.inflate(R.layout.custom_item, parent, false);
             ImageGalleryAdapter.MyViewHolder viewHolder = new ImageGalleryAdapter.MyViewHolder(photoView);
+
+
             return viewHolder;
         }
 
@@ -288,6 +344,9 @@ if(getIntent().getExtras() != null) {
             holder.itemView.setLongClickable(true);
 
             spacePhoto.setSelected(0);
+
+            views.add(holder);
+
             Glide.with(mContext)
                     .load(file.getAbsolutePath())
                     .asBitmap()
@@ -303,12 +362,16 @@ if(getIntent().getExtras() != null) {
 
         public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
+            public ImageView mImageCheck;
+
             public ImageView mPhotoImageView;
 
             public MyViewHolder(View itemView) {
 
                 super(itemView);
                 mPhotoImageView = (ImageView) itemView.findViewById(R.id.iv_photo);
+                mImageCheck = (ImageView) itemView.findViewById(R.id.imgCheck);
+
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
             }
@@ -344,7 +407,10 @@ if(getIntent().getExtras() != null) {
 
                             }
                             if (!encontrou) {
+
                                 modoSelecao = false;
+                                GlideActivity.this.invalidateOptionsMenu();
+
                             }
 
                         }
@@ -382,6 +448,7 @@ if(getIntent().getExtras() != null) {
 
                     modoSelecao = true;
 
+                    GlideActivity.this.invalidateOptionsMenu();
                 }
 
                 return true;
