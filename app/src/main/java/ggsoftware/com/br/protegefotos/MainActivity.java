@@ -18,6 +18,9 @@ import ggsoftware.com.br.protegefotos.dao.PastaVO;
 public class MainActivity extends AppCompatActivity {
 
     public static int CRIAR_NOVA_SENHA = 200;
+
+    public static int ALTERAR_SENHA = 300;
+
     public static int CONFERIR_SENHA = 100;
 
     static SharedPreferences sharedPreferences;
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         PastaDAO pastaDAO = new PastaDAO(MainActivity.this);
 
-        List<PastaVO> listaPastas = pastaDAO.listarPastas();
+        List<PastaVO> listaPastas = pastaDAO.listarPastas(false);
 
         ImageDAO imagemDAO = new ImageDAO(MainActivity.this);
 

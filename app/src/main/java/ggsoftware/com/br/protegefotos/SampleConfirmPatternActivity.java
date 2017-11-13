@@ -32,7 +32,7 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
 
         pastaDAO = new PastaDAO(SampleConfirmPatternActivity.this);
         if (MainActivity.isModoInvisivel()) {
-            List<PastaVO> pastas = pastaDAO.listarPastas();
+            List<PastaVO> pastas = pastaDAO.listarPastas(true);
             for (PastaVO pasta :
                     pastas) {
 

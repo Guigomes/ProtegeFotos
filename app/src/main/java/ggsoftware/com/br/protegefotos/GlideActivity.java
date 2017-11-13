@@ -55,11 +55,61 @@ public class GlideActivity extends AppCompatActivity {
     ImageDAO imagemDAO;
     private ProgressBar spinner;
 
-    private SpacePhoto[] mSpacePhotos;
+    private List<SpacePhoto> mSpacePhotos;
     private Context mContext;
 
     ArrayList<ImageGalleryAdapter.MyViewHolder> views = new ArrayList<>();
     boolean modoSelecao = false;
+    ImageGalleryAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_glide);
+
+        List<SpacePhoto> mSpacePhotos = new ArrayList<>();
+
+        spinner = (ProgressBar) findViewById(R.id.progressBar1);
+
+        String nomePasta = null;
+        if (getIntent().getExtras() != null) {
+
+            nomePasta = (String) getIntent().getExtras().get("nomePasta");
+        }
+        if (nomePasta != null) {
+            PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
+            pastaSelecionada = pastaDAO.buscarPorNome(nomePasta);
+            if (pastaSelecionada == null) {
+                pastaSelecionada = ConfirmPatternActivity.pastaVO;
+            }
+        } else {
+            pastaSelecionada = ConfirmPatternActivity.pastaVO;
+        }
+
+        setTitle(pastaSelecionada.getNomePasta());
+
+
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_images);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+
+        imagemDAO = new ImageDAO(GlideActivity.this);
+
+
+        listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
+        if (listaImagens.size() == 0) {
+            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.VISIBLE);
+        } else {
+            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.GONE);
+        }
+        adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(listaImagens));
+        recyclerView.setAdapter(adapter);
+
+        registerForContextMenu(recyclerView);
+
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,79 +129,177 @@ public class GlideActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            case R.id.action_alterar_nome_pasta:
+                alterarNomePasta();
+            case R.id.action_excluir_pasta:
+                excluirPasta();
+                break;
             case R.id.action_add_imagem:
                 addImagem();
-
-
-                return true;
-
+                break;
             case R.id.action_excluir_imagem:
-
-
-                return true;
-
+                excluirImagem();
+                break;
             case R.id.action_cancelar_selecao:
-
-                for(SpacePhoto foto: mSpacePhotos){
-                    foto.setSelected(0);
-                }
-                int count = views.size();
-                for(int i=0; i<count; i++)
-                {
-                    ImageGalleryAdapter.MyViewHolder v = views.get(i);
-                    //call imageview from the viewholder object by the variable name used to instatiate it
-                    ImageView imageView1 = v.mPhotoImageView;
-                    ImageView imageView3 = v.mImageCheck;
-                    imageView3.setVisibility(View.INVISIBLE);
-                    imageView1.setPadding(0, 0, 0, 0);
-
-                }
-                modoSelecao = false;
-                GlideActivity.this.invalidateOptionsMenu();
-
-                return true;
-
-
+                cancelarSelecao();
+                break;
             case R.id.action_new_folder:
-                AlertDialog.Builder builder = new AlertDialog.Builder(GlideActivity.this);
-                builder.setTitle(getString(R.string.txt_informe_nome_pasta));
-
-
-                final EditText input = new EditText(GlideActivity.this);
-
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setTextColor(Color.BLACK);
-                builder.setView(input);
-
-                builder.setPositiveButton(getString(R.string.btn_criar_pasta), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String m_Text = input.getText().toString();
-
-                        Intent it = new Intent(GlideActivity.this, SampleSetPatternActivity.class);
-
-                        it.putExtra("idPasta", -1);
-                        it.putExtra("nomePasta", m_Text);
-                        startActivityForResult(it, MainActivity.CRIAR_NOVA_SENHA);
-                    }
-                });
-
-                builder.setNegativeButton(getString(R.string.btn_cancelar), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-
-
-                return true;
+                criarNovaPasta();
+                break;
+            case R.id.action_alterar_senha:
+                alterarSenhaPasta();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+        return true;
+    }
 
+
+    private void alterarNomePasta() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GlideActivity.this);
+        builder.setTitle(getString(R.string.txt_informe_nome_novo_pasta));
+
+
+        final EditText input = new EditText(GlideActivity.this);
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setTextColor(Color.BLACK);
+        builder.setView(input);
+
+        builder.setPositiveButton(getString(R.string.btn_alterar_nome_pasta), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String novoNomePasta = input.getText().toString();
+                PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
+                pastaSelecionada.setNomePasta(novoNomePasta);
+                pastaDAO.updatePasta(pastaSelecionada);
+                startActivity(new Intent(GlideActivity.this, GlideActivity.class));
+                Toast.makeText(GlideActivity.this, getString(R.string.msg_sucesso_alterar_nome_pasta), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton(getString(R.string.btn_cancelar), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+
+    private void excluirImagem() {
+        int count = adapter.getItemCount();
+        List<SpacePhoto> fotosAremover = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+
+            SpacePhoto spacePhoto = mSpacePhotos.get(i);
+
+            if (spacePhoto.getSelected() == 1) {
+
+                fotosAremover.add(spacePhoto);
+                new ImageDAO(GlideActivity.this).excluir(spacePhoto.getId());
+            }
+
+
+        }
+        mSpacePhotos.removeAll(fotosAremover);
+
+
+        ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, mSpacePhotos);
+        recyclerView.setAdapter(adapter);
+        cancelarSelecao();
+
+
+    }
+
+    private void criarNovaPasta() {
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(GlideActivity.this);
+        builder2.setTitle(getString(R.string.txt_informe_nome_pasta));
+
+
+        final EditText input2 = new EditText(GlideActivity.this);
+
+        input2.setInputType(InputType.TYPE_CLASS_TEXT);
+        input2.setTextColor(Color.BLACK);
+        builder2.setView(input2);
+
+        builder2.setPositiveButton(getString(R.string.btn_criar_pasta), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String m_Text = input2.getText().toString();
+
+                Intent it = new Intent(GlideActivity.this, SampleSetPatternActivity.class);
+
+                it.putExtra("idPasta", -1);
+                it.putExtra("nomePasta", m_Text);
+                startActivityForResult(it, MainActivity.CRIAR_NOVA_SENHA);
+            }
+        });
+
+        builder2.setNegativeButton(getString(R.string.btn_cancelar), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder2.show();
+    }
+
+    private void alterarSenhaPasta() {
+        Intent it = new Intent(GlideActivity.this,
+                SampleSetPatternActivity.class);
+
+        int idPasta = pastaSelecionada.getId();
+        String nomePasta = pastaSelecionada.getNomePasta();
+
+        it.putExtra("idPasta", idPasta);
+
+        it.putExtra("nomePasta", nomePasta);
+
+        it.putExtra("isAlterarSenha", true);
+        startActivityForResult(it, MainActivity.ALTERAR_SENHA);
+
+
+    }
+
+    private void excluirPasta(){
+        PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
+
+        pastaDAO.excluir(pastaSelecionada.getId());
+
+        Toast.makeText(GlideActivity.this, getString(R.string.msg_sucesso_deletar_pasta), Toast.LENGTH_SHORT).show();
+
+        startActivity(new Intent(GlideActivity.this, MainActivity.class));
+
+
+
+
+    }
+    private void cancelarSelecao() {
+
+        for (SpacePhoto foto : mSpacePhotos) {
+            foto.setSelected(0);
+        }
+
+        int count = views.size();
+        for (int i = 0; i < count; i++) {
+            ImageGalleryAdapter.MyViewHolder v = views.get(i);
+
+            //call imageview from the viewholder object by the variable name used to instatiate it
+            ImageView imageView1 = v.mPhotoImageView;
+            ImageView imageView3 = v.mImageCheck;
+            imageView3.setVisibility(View.INVISIBLE);
+            imageView1.setPadding(0, 0, 0, 0);
+
+        }
+        modoSelecao = false;
+        GlideActivity.this.invalidateOptionsMenu();
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -194,54 +342,6 @@ public class GlideActivity extends AppCompatActivity {
         return super.getMenuInflater();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_glide);
-
-
-        spinner = (ProgressBar) findViewById(R.id.progressBar1);
-
-        String nomePasta = null;
-        if (getIntent().getExtras() != null) {
-
-            nomePasta = (String) getIntent().getExtras().get("nomePasta");
-        }
-        if (nomePasta != null) {
-            PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
-            pastaSelecionada = pastaDAO.buscarPorNome(nomePasta);
-            if (pastaSelecionada == null) {
-                pastaSelecionada = ConfirmPatternActivity.pastaVO;
-            }
-        } else {
-            pastaSelecionada = ConfirmPatternActivity.pastaVO;
-        }
-
-        setTitle(pastaSelecionada.getNomePasta());
-
-
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4);
-        recyclerView = (RecyclerView) findViewById(R.id.rv_images);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-
-        imagemDAO = new ImageDAO(GlideActivity.this);
-
-
-        listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
-        if (listaImagens.size() == 0) {
-            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.VISIBLE);
-        } else {
-            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.GONE);
-        }
-        ImageGalleryAdapter adapter = new ImageGalleryAdapter(this, SpacePhoto.getSpacePhotos(listaImagens));
-        recyclerView.setAdapter(adapter);
-
-        registerForContextMenu(recyclerView);
-
-
-
-    }
 
     public void addImagem() {
         Intent intent = new Intent();
@@ -302,6 +402,36 @@ public class GlideActivity extends AppCompatActivity {
             }
 
 
+        } else if (resultCode == RESULT_OK && requestCode == MainActivity.ALTERAR_SENHA) {
+
+            String nomePasta = (String) imageReturnedIntent.getExtras().get("nomePasta");
+            String pattern = (String) imageReturnedIntent.getExtras().get("pattern");
+
+
+            PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
+            PastaVO pastaVO = pastaDAO.buscarPorNome(nomePasta);
+            if (pastaVO != null) {
+                pastaVO.setSenhaPasta(pattern);
+
+                boolean sucesso = pastaDAO.updatePasta(pastaVO);
+
+
+                if (sucesso) {
+                    Toast.makeText(GlideActivity.this, getString(R.string.msg_sucesso_alterar_senha), Toast.LENGTH_SHORT).show();
+                    Intent it = new Intent(GlideActivity.this, GlideActivity.class);
+                    it.putExtra("nomePasta", nomePasta);
+                    startActivity(it);
+                    finish();
+
+                } else {
+                    Toast.makeText(GlideActivity.this, getString(R.string.msg_erro_criar_pasta), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(GlideActivity.this, getString(R.string.msg_pasta_nao_existe), Toast.LENGTH_SHORT).show();
+
+            }
+
+
         }
 
     }
@@ -335,7 +465,7 @@ public class GlideActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ImageGalleryAdapter.MyViewHolder holder, int position) {
 
-            SpacePhoto spacePhoto = mSpacePhotos[position];
+            SpacePhoto spacePhoto = mSpacePhotos.get(position);
             ImageView imageView = holder.mPhotoImageView;
 
             ImageSaver imageSaver = new ImageSaver(GlideActivity.this);
@@ -357,7 +487,7 @@ public class GlideActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return (mSpacePhotos.length);
+            return (mSpacePhotos.size());
         }
 
         public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -382,7 +512,7 @@ public class GlideActivity extends AppCompatActivity {
                 int position = getAdapterPosition();
 
                 if (position != RecyclerView.NO_POSITION) {
-                    SpacePhoto spacePhoto = mSpacePhotos[position];
+                    SpacePhoto spacePhoto = mSpacePhotos.get(position);
 
                     if (modoSelecao) {
                         ImageView imagem = (ImageView) view.findViewById(R.id.iv_photo);
@@ -434,7 +564,7 @@ public class GlideActivity extends AppCompatActivity {
 
 
                 if (position != RecyclerView.NO_POSITION) {
-                    SpacePhoto spacePhoto = mSpacePhotos[position];
+                    SpacePhoto spacePhoto = mSpacePhotos.get(position);
 
 
                     ImageView imagem = (ImageView) view.findViewById(R.id.iv_photo);
@@ -457,7 +587,7 @@ public class GlideActivity extends AppCompatActivity {
 
         }
 
-        public ImageGalleryAdapter(Context context, SpacePhoto[] spacePhotos) {
+        public ImageGalleryAdapter(Context context, List<SpacePhoto> spacePhotos) {
             mContext = context;
             mSpacePhotos = spacePhotos;
 
@@ -487,6 +617,8 @@ public class GlideActivity extends AppCompatActivity {
 
             if (result) {
                 listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
+                mSpacePhotos = SpacePhoto.getSpacePhotos(listaImagens);
+
                 ImageGalleryAdapter adapter = new ImageGalleryAdapter(GlideActivity.this, SpacePhoto.getSpacePhotos(listaImagens));
                 recyclerView.setAdapter(adapter);
 
@@ -531,7 +663,12 @@ public class GlideActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
 
             listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
+
+            views = new ArrayList<>();
             ImageGalleryAdapter adapter = new ImageGalleryAdapter(GlideActivity.this, SpacePhoto.getSpacePhotos(listaImagens));
+
+
+            mSpacePhotos = SpacePhoto.getSpacePhotos(listaImagens);
             recyclerView.setAdapter(adapter);
 
             spinner.setVisibility(View.GONE);

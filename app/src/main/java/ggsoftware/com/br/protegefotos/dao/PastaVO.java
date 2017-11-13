@@ -14,6 +14,7 @@ public class PastaVO {
 
     private String senhaPasta;
 
+    private int invisivel;
     public int getId() {
         return id;
     }
@@ -44,5 +45,13 @@ public class PastaVO {
 
     public void setSenhaPasta(String senhaPasta) {
         this.senhaPasta = senhaPasta;
+    }
+
+    public int getInvisivel() {
+        return invisivel;
+    }
+
+    public void setInvisivel(int invisivel) {
+        this.invisivel = invisivel;
     }
 }

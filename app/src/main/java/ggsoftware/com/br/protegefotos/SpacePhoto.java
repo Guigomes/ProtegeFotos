@@ -10,6 +10,7 @@ import android.os.Parcelable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Space;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,9 @@ public class SpacePhoto implements Parcelable {
     private int selected;
     private int id;
 
-    private static SpacePhoto[] fotos;
+    private static List<SpacePhoto> fotos;
 
-    public static SpacePhoto[] getFotos(){
+    public static List<SpacePhoto>  getFotos(){
 
         return fotos;
     }
@@ -78,14 +79,13 @@ public class SpacePhoto implements Parcelable {
         mTitle = title;
     }
 
-    public static  SpacePhoto[] getSpacePhotos(  List<ImagemVO> imagens) {
+    public static  List<SpacePhoto> getSpacePhotos(  List<ImagemVO> imagens) {
 
 
-        SpacePhoto[] photos = new SpacePhoto[imagens.size()];
+        List<SpacePhoto> photos = new ArrayList<>();
         int i = 0;
         for(ImagemVO imagemVO : imagens){
-            photos[i] = new SpacePhoto(imagemVO.getDiretorio(), imagemVO.getNome(), imagemVO.getId());
-            i++;
+            photos.add(new SpacePhoto(imagemVO.getDiretorio(), imagemVO.getNome(), imagemVO.getId()));
 
         }
         fotos = photos;

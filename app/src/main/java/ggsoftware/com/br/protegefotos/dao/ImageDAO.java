@@ -31,7 +31,7 @@ public class ImageDAO {
         valores.put(CriaBanco.DIRETORIO, diretorio);
 
 
-        resultado = db.insert(CriaBanco.TABELA, null, valores);
+        resultado = db.insert(CriaBanco.TABELA_IMAGEM, null, valores);
         db.close();
 
         if (resultado ==-1)
@@ -45,7 +45,7 @@ public class ImageDAO {
         Cursor rs;
         String[] campos =  {banco.ID,banco.NOME, banco.DIRETORIO};
         db = banco.getReadableDatabase();
-        rs = db.query(banco.TABELA, campos, null, null, null, null, null, null);
+        rs = db.query(banco.TABELA_IMAGEM, campos, null, null, null, null, null, null);
 
         while (rs.moveToNext()) {
             ImagemVO imagemVO = new ImagemVO();
@@ -70,7 +70,7 @@ public class ImageDAO {
 
         String where = banco.DIRETORIO + " = ?";
         String[] argumentos = {nomePasta};
-        rs = db.query(banco.TABELA, campos, where, argumentos, null, null, null, null);
+        rs = db.query(banco.TABELA_IMAGEM, campos, where, argumentos, null, null, null, null);
         while (rs.moveToNext()) {
             ImagemVO imagemVO = new ImagemVO();
             imagemVO.setId(rs.getInt(rs.getColumnIndex(CriaBanco.ID)));
@@ -84,6 +84,19 @@ public class ImageDAO {
         db.close();
 
         return listaImagens;
+    }
+
+    public int excluir(int idImagem) {
+        int deletou;
+        db = banco.getReadableDatabase();
+
+        String where = CriaBanco.ID + " = ?";
+        String[] argumentos = {String.valueOf(idImagem)};
+        deletou = db.delete(banco.TABELA_IMAGEM, where, argumentos);
+
+        db.close();
+
+        return deletou;
     }
 }
 

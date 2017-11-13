@@ -31,6 +31,8 @@ public class EscolherPastaActivity extends AppCompatActivity {
 
     private String m_Text;
 
+    PastaDAO pastaDAO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,9 +84,9 @@ public class EscolherPastaActivity extends AppCompatActivity {
             }
         });
 
-        PastaDAO pastaDAO = new PastaDAO(EscolherPastaActivity.this);
+         pastaDAO = new PastaDAO(EscolherPastaActivity.this);
 
-        List<PastaVO> pastas = pastaDAO.listarPastas();
+        List<PastaVO> pastas = pastaDAO.listarPastas(false);
 
         ListView listaPastas = (ListView) findViewById(R.id.lista_pastas);
 
@@ -184,6 +186,13 @@ finish();
     public void ativarModoInvisivel(){
         MainActivity.setModoInvisivel(true);
 
+        List<PastaVO> pastas = pastaDAO.listarPastas(false);
+
+        for(PastaVO pasta : pastas){
+            pasta.setInvisivel(1);
+            pastaDAO.updatePasta(pasta);
+        }
+        
         Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
         it.putExtra("isModoInvisivel", true);
         finish();

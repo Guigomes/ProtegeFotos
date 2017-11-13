@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class CriaBanco  extends SQLiteOpenHelper {
 
     public static final String NOME_BANCO = "protegefotos.db";
-    public static final String TABELA = "imagens";
+    public static final String TABELA_IMAGEM = "imagens";
     public static final String TABELA_PASTA = "pasta";
 
     public static final String NOME_PASTA = "nome_pasta";
@@ -19,6 +19,8 @@ public class CriaBanco  extends SQLiteOpenHelper {
     public static final String TIMESTAMP_CRIACAO_PASTA = "timestamp_criacao_pasta";
 
     public static final String SENHA_PASTA = "senha_pasta";
+
+    public static final String INVISIVEL = "invisivel";
 
     public static final String ID = "id";
     public static final String NOME = "nome";
@@ -32,7 +34,7 @@ public class CriaBanco  extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE "+TABELA+"("
+        String sql = "CREATE TABLE "+TABELA_IMAGEM+"("
                 + ID + " integer primary key autoincrement,"
                 + NOME + " text,"
                 + DIRETORIO + " text"
@@ -43,9 +45,8 @@ public class CriaBanco  extends SQLiteOpenHelper {
                 + ID + " integer primary key autoincrement,"
                 + NOME_PASTA + " text,"
                 + TIMESTAMP_CRIACAO_PASTA + " text,"
-
-                + SENHA_PASTA + " text"
-
+                + SENHA_PASTA + " text, "
+                + INVISIVEL + " integer"
                 +")";
         db.execSQL(sql);
         db.execSQL(sql2);
@@ -55,7 +56,7 @@ public class CriaBanco  extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS" + TABELA);
+
         onCreate(db);
 
     }

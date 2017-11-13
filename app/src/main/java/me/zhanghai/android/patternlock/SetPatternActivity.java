@@ -27,6 +27,8 @@ public class SetPatternActivity extends BasePatternActivity
 
     public static String nomePasta;
     public static int idPasta;
+    public static Boolean isAlterarSenha;
+
 
     private enum LeftButtonState {
 
@@ -103,11 +105,9 @@ public class SetPatternActivity extends BasePatternActivity
         super.onCreate(savedInstanceState);
 
         mMinPatternSize = getMinPatternSize();
-/*
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_pattern);
-        setSupportActionBar(toolbar);
-*/
+
         mPatternView.setOnPatternListener(this);
+
         mLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,7 +123,11 @@ public class SetPatternActivity extends BasePatternActivity
 
         idPasta = (int) getIntent().getExtras().get("idPasta");
         nomePasta = (String) getIntent().getExtras().get("nomePasta");
+        isAlterarSenha = (Boolean) getIntent().getExtras().get("isAlterarSenha");
 
+        if(isAlterarSenha != null && isAlterarSenha == true){
+            setTitle("Alterar Senha da pasta");
+        }
 
         if (savedInstanceState == null) {
             updateStage(Stage.Draw);
@@ -244,22 +248,17 @@ public class SetPatternActivity extends BasePatternActivity
         if (mStage == Stage.DrawTooShort) {
             mMessageText.setText(getString(mStage.messageId, mMinPatternSize));
         } else if (mStage == Stage.Draw) {
-            if (idPasta == 0) {
-                nomePasta = getString(R.string.txt_pasta_principal);
-            }
-            String mensagem = getString(mStage.messageId, nomePasta);
-            mMessageText.setText(mensagem);
-/*
-            else {
+            if(isAlterarSenha != null && isAlterarSenha){
 
-                PastaDAO pastaDAO = new PastaDAO(SetPatternActivity.this);
-                PastaVO pastaVO = pastaDAO.buscarPorId(idPasta);
-                if (pastaVO != null) {
-                    nomePasta = pastaVO.getNomePasta();
+                String mensagem = getString(R.string.msg_padrao_alterar, nomePasta);
+                mMessageText.setText(mensagem);
+            }else {
+                if (idPasta == 0) {
+                    nomePasta = getString(R.string.txt_pasta_principal);
                 }
+                String mensagem = getString(mStage.messageId, nomePasta);
+                mMessageText.setText(mensagem);
             }
-
-            }*/
         } else {
             mMessageText.setText(mStage.messageId);
         }

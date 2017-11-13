@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
+import java.util.List;
 
 public class SpacePhotoActivity extends AppCompatActivity {
 
@@ -45,13 +46,13 @@ public class SpacePhotoActivity extends AppCompatActivity {
     }
 
     public void nextFoto(View v){
-        SpacePhoto[] fotos = SpacePhoto.getFotos();
-for(int i = 0;i< fotos.length; i++){
-    if(fotos[i].getId() == spacePhoto.getId()){
-        if(i < fotos.length -1){
-            spacePhoto = fotos[i+1];
+        List<SpacePhoto> fotos = SpacePhoto.getFotos();
+        for(int i = 0;i< fotos.size(); i++){
+    if(fotos.get(i).getId() == spacePhoto.getId()){
+        if(i < fotos.size() -1){
+            spacePhoto = fotos.get(i+1);
         }else{
-            spacePhoto = fotos[0];
+            spacePhoto = fotos.get(0);
         }
         ImageSaver imageSaver = new ImageSaver(SpacePhotoActivity.this);
         File file = imageSaver.loadFile(spacePhoto.getTitle());
