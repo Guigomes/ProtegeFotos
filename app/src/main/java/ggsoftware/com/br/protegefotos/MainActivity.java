@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static int CONFERIR_SENHA = 100;
 
     static SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,15 +36,19 @@ public class MainActivity extends AppCompatActivity {
         ImageDAO imagemDAO = new ImageDAO(MainActivity.this);
 
 
-
 //        setContentView(R.layout.activity_main);
 
         sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        if (MainActivity.isModoMisto()) {
+            startActivity(new Intent(MainActivity.this, EscolherPastaActivity.class));
+            finish();
 
-        if(MainActivity.isModoInvisivel()){
+        } else if (MainActivity.isModoInvisivel()) {
+
             Intent it = new Intent(MainActivity.this, SampleConfirmPatternActivity.class);
             startActivityForResult(it, CONFERIR_SENHA);
-        }else if (listaPastas.size() == 0) {
+           
+        } else if (listaPastas.size() == 0) {
             Intent it = new Intent(MainActivity.this,
                     SampleSetPatternActivity.class);
 
@@ -51,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
             it.putExtra("idPasta", idPasta);
             startActivityForResult(it, CRIAR_NOVA_SENHA);
-        }
-         else {
+        } else {
 
             startActivity(new Intent(MainActivity.this, EscolherPastaActivity.class));
             finish();
@@ -107,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-      public static boolean isModoInvisivel() {
+    public static boolean isModoInvisivel() {
 
         return sharedPreferences.getBoolean("isModoInvisivel", false);
 
@@ -121,5 +125,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static boolean isModoMisto() {
+
+        return sharedPreferences.getBoolean("isModoMisto", false);
+
+    }
+
+    public static void setModoMisto(boolean isModoMisto) {
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isModoMisto", isModoMisto);
+        editor.commit();
+
+    }
 
 }

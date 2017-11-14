@@ -31,8 +31,11 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
         String padrao = PatternUtils.patternToSha1String(pattern);
 
         pastaDAO = new PastaDAO(SampleConfirmPatternActivity.this);
-        if (MainActivity.isModoInvisivel()) {
+        if (MainActivity.isModoInvisivel() || MainActivity.isModoMisto())  {
+            List<PastaVO> pastasVisiveis = pastaDAO.listarPastas(false);
             List<PastaVO> pastas = pastaDAO.listarPastas(true);
+
+            pastas.addAll(pastasVisiveis);
             for (PastaVO pasta :
                     pastas) {
 

@@ -62,12 +62,15 @@ public class GlideActivity extends AppCompatActivity {
     boolean modoSelecao = false;
     ImageGalleryAdapter adapter;
 
+    PastaDAO pastaDAO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glide);
 
         List<SpacePhoto> mSpacePhotos = new ArrayList<>();
+        pastaDAO = new PastaDAO(GlideActivity.this);
 
         spinner = (ProgressBar) findViewById(R.id.progressBar1);
 
@@ -77,7 +80,6 @@ public class GlideActivity extends AppCompatActivity {
             nomePasta = (String) getIntent().getExtras().get("nomePasta");
         }
         if (nomePasta != null) {
-            PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
             pastaSelecionada = pastaDAO.buscarPorNome(nomePasta);
             if (pastaSelecionada == null) {
                 pastaSelecionada = ConfirmPatternActivity.pastaVO;
@@ -115,7 +117,7 @@ public class GlideActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        if (MainActivity.isModoInvisivel()) {
+        if (MainActivity.isModoInvisivel() || MainActivity.isModoMisto()) {
             getMenuInflater().inflate(R.menu.menu_galeria_modo_invisivel, menu);
         } else {
             getMenuInflater().inflate(R.menu.menu_galeria, menu);
@@ -149,11 +151,27 @@ public class GlideActivity extends AppCompatActivity {
             case R.id.action_alterar_senha:
                 alterarSenhaPasta();
                 break;
+
+            case R.id.action_remover_modo_invisivel:
+                removerPastasModoInvisivel();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
         return true;
+    }
+
+    private void removerPastasModoInvisivel() {
+
+        pastaSelecionada.setInvisivel(0);
+        pastaDAO.updatePasta(pastaSelecionada);
+
+        MainActivity.setModoInvisivel(false);
+
+        MainActivity.setModoMisto(pastaDAO.isModoMisto());
+        startActivity(new Intent(GlideActivity.this, MainActivity.class));
+        Toast.makeText(GlideActivity.this, getString(R.string.msg_sucesso_remover_pasta_modo_invisivel), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -172,7 +190,7 @@ public class GlideActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String novoNomePasta = input.getText().toString();
-                PastaDAO pastaDAO = new PastaDAO(GlideActivity.this);
+
                 pastaSelecionada.setNomePasta(novoNomePasta);
                 pastaDAO.updatePasta(pastaSelecionada);
                 startActivity(new Intent(GlideActivity.this, GlideActivity.class));

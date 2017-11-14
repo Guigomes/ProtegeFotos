@@ -35,9 +35,9 @@ public class PastaDAO {
         valores.put(CriaBanco.NOME_PASTA, nomePasta);
         valores.put(CriaBanco.TIMESTAMP_CRIACAO_PASTA, String.valueOf(Calendar.getInstance().getTimeInMillis()));
         valores.put(CriaBanco.SENHA_PASTA, senhaPasta);
-        if (MainActivity.isModoInvisivel()) {
+        if (MainActivity.isModoInvisivel() || MainActivity.isModoInvisivel()) {
             valores.put(CriaBanco.INVISIVEL, 1);
-        }else{
+        } else {
             valores.put(CriaBanco.INVISIVEL, 0);
         }
 
@@ -111,6 +111,45 @@ public class PastaDAO {
         return listaPastas;
     }
 
+
+    public boolean isModoMisto() {
+
+
+        List<PastaVO> listaPastas = new ArrayList<>();
+        Cursor rs;
+        String[] campos = {banco.ID, banco.NOME_PASTA, banco.TIMESTAMP_CRIACAO_PASTA, banco.SENHA_PASTA, banco.INVISIVEL};
+        String where = banco.INVISIVEL + " = ?";
+
+
+        db = banco.getReadableDatabase();
+        rs = db.query(TABELA_PASTA, campos, null, null, null, null, null, null);
+
+        while (rs.moveToNext()) {
+            PastaVO pastaVO = new PastaVO();
+            pastaVO.setId(rs.getInt(rs.getColumnIndex(CriaBanco.ID)));
+            pastaVO.setNomePasta(rs.getString(rs.getColumnIndex(CriaBanco.NOME_PASTA)));
+            pastaVO.setTimestampCriacaoPasta(rs.getString(rs.getColumnIndex(CriaBanco.TIMESTAMP_CRIACAO_PASTA)));
+            pastaVO.setSenhaPasta(rs.getString(rs.getColumnIndex(CriaBanco.SENHA_PASTA)));
+            pastaVO.setInvisivel(rs.getInt(rs.getColumnIndex(CriaBanco.INVISIVEL)));
+
+            listaPastas.add(pastaVO);
+        }
+        rs.close();
+        db.close();
+        boolean encontrouVisivel = false;
+        boolean encontrouInvisivel = false;
+
+        for (PastaVO pasta : listaPastas) {
+            if (pasta.getInvisivel() == 0) {
+                encontrouVisivel = true;
+            }
+            if (pasta.getInvisivel() == 1) {
+                encontrouInvisivel = true;
+            }
+        }
+
+        return encontrouVisivel && encontrouInvisivel;
+    }
 
     public int excluir(int idPasta) {
         int deletou;

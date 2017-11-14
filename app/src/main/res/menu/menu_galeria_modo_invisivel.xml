@@ -22,7 +22,7 @@
         android:title="@string/btn_alterar_senha"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_teste"
+        android:id="@+id/action_remover_modo_invisivel"
         android:orderInCategory="100"
         android:title="Remover pasta do modo invísivel"
         app:showAsAction="never" />
