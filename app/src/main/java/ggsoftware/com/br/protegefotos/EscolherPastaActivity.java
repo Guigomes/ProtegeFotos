@@ -97,6 +97,7 @@ public class EscolherPastaActivity extends AppCompatActivity {
         }
 
 
+
         listaPastas.setAdapter(new ArrayAdapter<String>(
                 this, R.layout.item_list,
                 R.id.Itemname, nomePastas));
@@ -133,8 +134,10 @@ public class EscolherPastaActivity extends AppCompatActivity {
                     Toast.makeText(EscolherPastaActivity.this, getString(R.string.msg_sucesso_criar_pasta), Toast.LENGTH_SHORT).show();
                     Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
                     it.putExtra("nomePasta", nomePasta);
-                    startActivity(it);
                     finish();
+
+                    startActivity(it);
+
 
                 } else {
                     Toast.makeText(EscolherPastaActivity.this, getString(R.string.msg_erro_criar_pasta), Toast.LENGTH_SHORT).show();
@@ -150,7 +153,9 @@ public class EscolherPastaActivity extends AppCompatActivity {
 
 
             Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
-finish();
+            finish();
+
+
             startActivity(it);
 
 
@@ -162,7 +167,9 @@ finish();
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_pasta, menu);
+        if(!MainActivity.isModoMisto()) {
+            getMenuInflater().inflate(R.menu.menu_pasta, menu);
+        }
         return true;
     }
 

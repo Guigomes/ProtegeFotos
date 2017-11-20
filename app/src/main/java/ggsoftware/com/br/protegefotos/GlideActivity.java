@@ -351,7 +351,11 @@ public class GlideActivity extends AppCompatActivity {
             Intent it = new Intent(GlideActivity.this, SampleConfirmPatternActivity.class);
             startActivity(it);
         } else {
+            Intent it = new Intent(GlideActivity.this, EscolherPastaActivity.class);
+            startActivity(it);
             finish();
+
+
         }
     }
 
@@ -634,6 +638,7 @@ public class GlideActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
 
             if (result) {
+                ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.GONE);
                 listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
                 mSpacePhotos = SpacePhoto.getSpacePhotos(listaImagens);
 
@@ -680,6 +685,7 @@ public class GlideActivity extends AppCompatActivity {
 
         protected void onPostExecute(Boolean result) {
 
+            ((TextView) findViewById(R.id.txt_pasta_vazia)).setVisibility(View.GONE);
             listaImagens = imagemDAO.listarPorPasta(pastaSelecionada.getNomePasta());
 
             views = new ArrayList<>();
