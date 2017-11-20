@@ -9,6 +9,7 @@
         android:scaleType="centerCrop"
         android:layout_margin="2dp"
         android:layout_width="match_parent"/>
+
     <ImageView
 android:id="@+id/imgCheck"
         android:adjustViewBounds="true"

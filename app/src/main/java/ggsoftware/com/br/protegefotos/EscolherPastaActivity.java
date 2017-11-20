@@ -84,35 +84,78 @@ public class EscolherPastaActivity extends AppCompatActivity {
             }
         });
 
-         pastaDAO = new PastaDAO(EscolherPastaActivity.this);
+        pastaDAO = new PastaDAO(EscolherPastaActivity.this);
 
-        List<PastaVO> pastas = pastaDAO.listarPastas(false);
-
+        Intent it = getIntent();
         ListView listaPastas = (ListView) findViewById(R.id.lista_pastas);
-
         nomePastas = new ArrayList();
 
-        for (PastaVO pasta : pastas) {
-            nomePastas.add(pasta.getNomePasta());
+        if (it.getExtras() != null && it.getExtras().get("isEmpate") != null) {
+
+            setTitle(getString(R.string.msg_pastas_iguais));
+            List<PastaVO> pastasVisiveis = pastaDAO.listarPastas(false);
+            final List<PastaVO> pastas = pastaDAO.listarPastas(true);
+
+            pastas.addAll(pastasVisiveis);
+
+            String padrao = (String) it.getExtras().get("padrao");
+            for (PastaVO pasta :
+                    pastas) {
+
+                if (padrao.equals(pasta.getSenhaPasta())) {
+                    nomePastas.add(pasta.getNomePasta());
+
+                }
+
+            }
+
+
+            listaPastas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String nomePastaEscolhida = nomePastas.get(position);
+                    for (PastaVO pasta : pastas) {
+                        if(pasta.getNomePasta().equals(nomePastaEscolhida)){
+                            ConfirmPatternActivity.pastaVO = pasta;
+
+                        }
+
+                    }
+                    Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
+                    it.putExtra("nomePasta", nomePastaEscolhida);
+                    startActivityForResult(it, MainActivity.CONFERIR_SENHA);
+
+                }
+            });
+
+        } else {
+
+            List<PastaVO> pastas = pastaDAO.listarPastas(false);
+
+
+            for (PastaVO pasta : pastas) {
+                nomePastas.add(pasta.getNomePasta());
+            }
+
+            listaPastas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String nomePastaEscolhida = nomePastas.get(position);
+
+                    Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
+                    it.putExtra("nomePasta", nomePastaEscolhida);
+                    startActivityForResult(it, MainActivity.CONFERIR_SENHA);
+
+                }
+            });
+
         }
-
-
 
         listaPastas.setAdapter(new ArrayAdapter<String>(
                 this, R.layout.item_list,
                 R.id.Itemname, nomePastas));
 
-        listaPastas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String nomePastaEscolhida = nomePastas.get(position);
 
-                Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
-                it.putExtra("nomePasta", nomePastaEscolhida);
-                startActivityForResult(it, MainActivity.CONFERIR_SENHA);
-
-            }
-        });
     }
 
     @Override
@@ -151,7 +194,6 @@ public class EscolherPastaActivity extends AppCompatActivity {
         } else if (resultCode == RESULT_OK && requestCode == MainActivity.CONFERIR_SENHA) {
 
 
-
             Intent it = new Intent(EscolherPastaActivity.this, GlideActivity.class);
             finish();
 
@@ -163,11 +205,10 @@ public class EscolherPastaActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(!MainActivity.isModoMisto()) {
+        if (!MainActivity.isModoMisto() && !MainActivity.isModoInvisivel()) {
             getMenuInflater().inflate(R.menu.menu_pasta, menu);
         }
         return true;
@@ -190,16 +231,16 @@ public class EscolherPastaActivity extends AppCompatActivity {
     }
 
 
-    public void ativarModoInvisivel(){
+    public void ativarModoInvisivel() {
         MainActivity.setModoInvisivel(true);
 
         List<PastaVO> pastas = pastaDAO.listarPastas(false);
 
-        for(PastaVO pasta : pastas){
+        for (PastaVO pasta : pastas) {
             pasta.setInvisivel(1);
             pastaDAO.updatePasta(pasta);
         }
-        
+
         Intent it = new Intent(EscolherPastaActivity.this, SampleConfirmPatternActivity.class);
         it.putExtra("isModoInvisivel", true);
         finish();
