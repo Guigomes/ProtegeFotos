@@ -32,7 +32,7 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
         String padrao = PatternUtils.patternToSha1String(pattern);
 
         pastaDAO = new PastaDAO(SampleConfirmPatternActivity.this);
-        if (MainActivity.isModoInvisivel() || MainActivity.isModoMisto())  {
+        if (MainActivity.isModoInvisivel() || MainActivity.isModoMisto()) {
             List<PastaVO> pastasVisiveis = pastaDAO.listarPastas(false);
             List<PastaVO> pastas = pastaDAO.listarPastas(true);
 
@@ -50,15 +50,20 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
                 }
 
             }
-            if(contPastasMesmasSenha >= 2){
+            if (contPastasMesmasSenha >= 2) {
                 Intent it = new Intent(SampleConfirmPatternActivity.this, EscolherPastaActivity.class);
+                it.putExtra("isEmpate", true);
+                it.putExtra("padrao", padrao);
                 startActivity(it);
                 return true;
-            }else{
-
-                Intent it = new Intent(SampleConfirmPatternActivity.this, GlideActivity.class);
-                startActivity(it);
-                return true;
+            } else {
+                if (contPastasMesmasSenha == 1) {
+                    Intent it = new Intent(SampleConfirmPatternActivity.this, GlideActivity.class);
+                    startActivity(it);
+                    return true;
+                } else {
+                    return false;
+                }
             }
 
         } else {
@@ -66,7 +71,7 @@ public class SampleConfirmPatternActivity extends ConfirmPatternActivity {
             if (TextUtils.equals(PatternUtils.patternToSha1String(pattern), patternSha1)) {
                 Intent it = new Intent(SampleConfirmPatternActivity.this, GlideActivity.class);
 
-                    finish();
+                finish();
 
 
                 startActivity(it);

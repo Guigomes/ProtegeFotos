@@ -62,4 +62,5 @@
     <string name="msg_sucesso_alterar_nome_pasta">Nome da pasta alterado com sucesso</string>
     <string name="msg_sucesso_deletar_pasta">Pasta deletada com sucesso</string>
     <string name="msg_sucesso_remover_pasta_modo_invisivel">A pasta foi removida do modo invisível</string>
+    <string name="msg_pastas_iguais">Escolha a pasta desejada</string>
 </resources>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "975690361252",
+    "firebase_url": "https://protegefotos-b1fc4.firebaseio.com",
+    "project_id": "protegefotos-b1fc4",
+    "storage_bucket": "protegefotos-b1fc4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975690361252:android:8c27db2fc7f5a852",
+        "android_client_info": {
+          "package_name": "ggsoftware.com.br.protegefotos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975690361252-95r6ft2faj06c0mbq9eimc96n60j4vni.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ggsoftware.com.br.protegefotos",
+            "certificate_hash": "e9378e3a7f4ee2a038a119bb532b37cf77ae1cd8"
+          }
+        },
+        {
+          "client_id": "975690361252-tbpp7dfdjrglj0n7b61nn2tkrvrhqp54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI1YhyhsaWqLCLYS977EzTV1TftQY4hGU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975690361252-tbpp7dfdjrglj0n7b61nn2tkrvrhqp54.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
