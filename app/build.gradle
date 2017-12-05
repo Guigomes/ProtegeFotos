@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "ggsoftware.com.br.protegefotos"
+        applicationId "ggsoftware.com.br.protegefotos2"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -36,5 +36,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.davidecirillo.multichoicerecyclerview:multichoicerecyclerview:2.1.0'
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
+
 
 }

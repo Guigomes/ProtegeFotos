@@ -28,7 +28,7 @@
     <string name="btn_cancelar_selecao">Cancelar Seleção</string>
 
     <string name="pl_draw_pattern">Crie um padrão para a pasta %1$s</string>
-
+    <string name="file_provider_authority" translatable="false">ggsoftware.com.br.protegefotos.fileprovider</string>
     <string name="msg_padrao_alterar">Crie um novo padrão para a pasta %1$s</string>
 
     <string name="pl_draw_pattern_to_unlock">Desenhe o padrão para desbloquear</string>

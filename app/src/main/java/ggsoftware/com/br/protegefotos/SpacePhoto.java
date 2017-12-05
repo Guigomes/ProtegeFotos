@@ -12,6 +12,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Space;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class SpacePhoto implements Parcelable {
 
     private int selected;
     private int id;
+
+    private String filepath;
 
     private static List<SpacePhoto> fotos;
 
@@ -49,6 +52,7 @@ public class SpacePhoto implements Parcelable {
         mUrl = in.readString();
         mTitle = in.readString();
         id  = in.readInt();
+        filepath = in.readString();
     }
 
     public static final Creator<SpacePhoto> CREATOR = new Creator<SpacePhoto>() {
@@ -122,5 +126,13 @@ public class SpacePhoto implements Parcelable {
 
     public void setSelected(int selected) {
         this.selected = selected;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
 }

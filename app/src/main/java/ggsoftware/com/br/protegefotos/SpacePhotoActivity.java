@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.File;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class SpacePhotoActivity extends AppCompatActivity {
 
     public static final String EXTRA_SPACE_PHOTO = "SpacePhotoActivity.SPACE_PHOTO";
-    private ImageView mImageView;
+    private PhotoView mImageView;
 
     SpacePhoto spacePhoto;
     @Override
@@ -30,7 +31,7 @@ public class SpacePhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_space_photo);
 
-        mImageView = (ImageView) findViewById(R.id.image);
+        mImageView = (PhotoView) findViewById(R.id.image);
          spacePhoto = getIntent().getParcelableExtra(EXTRA_SPACE_PHOTO);
 
         ImageSaver imageSaver = new ImageSaver(SpacePhotoActivity.this);

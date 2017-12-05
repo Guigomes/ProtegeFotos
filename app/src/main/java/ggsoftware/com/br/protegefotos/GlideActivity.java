@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -155,6 +156,18 @@ public class GlideActivity extends AppCompatActivity {
             case R.id.action_remover_modo_invisivel:
                 removerPastasModoInvisivel();
                 break;
+            case R.id.share:
+compartilharImagem();
+                /*
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBodyText = "Check it out. Your message goes here";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Subject here");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+                startActivity(Intent.createChooser(sharingIntent, "Shearing Option"));
+                */
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -234,7 +247,50 @@ public class GlideActivity extends AppCompatActivity {
 
 
     }
+    private void compartilharImagem() {
+        int count = adapter.getItemCount();
 
+
+
+
+        for (int i = 0; i < count; i++) {
+
+            SpacePhoto spacePhoto = mSpacePhotos.get(i);
+            if (spacePhoto.getSelected() == 1) {
+                try {
+                    Toast.makeText(this, spacePhoto.getFilepath(), Toast.LENGTH_SHORT).show();
+                    File file = new ImageSaver(GlideActivity.this).loadFile(spacePhoto.getTitle());
+
+                    File imagePath = new File(getFilesDir(), "app_images");
+                    File newFile = new File(imagePath, spacePhoto.getTitle());
+
+                    Uri imageUri = FileProvider.getUriForFile(GlideActivity.this,
+                            getString(R.string.file_provider_authority),
+                            newFile);
+
+
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    shareIntent.setType("image/*");
+                    // Launch sharing dialog for image
+                    startActivity(Intent.createChooser(shareIntent, "Share Image"));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+
+
+
+        cancelarSelecao();
+
+
+
+    }
     private void criarNovaPasta() {
         AlertDialog.Builder builder2 = new AlertDialog.Builder(GlideActivity.this);
         builder2.setTitle(getString(R.string.txt_informe_nome_pasta));
@@ -496,7 +552,7 @@ public class GlideActivity extends AppCompatActivity {
             holder.itemView.setLongClickable(true);
 
             spacePhoto.setSelected(0);
-
+            spacePhoto.setFilepath(file.getAbsolutePath());
             views.add(holder);
 
             Glide.with(mContext)

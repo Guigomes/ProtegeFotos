@@ -19,7 +19,7 @@ import java.io.IOException;
 public class ImageSaver {
 
     private String directoryName = "images";
-    private String fileName = "image.png";
+    private String fileName;
     private Context context;
     private boolean external;
 
@@ -32,15 +32,7 @@ public class ImageSaver {
         return this;
     }
 
-    public ImageSaver setExternal(boolean external) {
-        this.external = external;
-        return this;
-    }
 
-    public ImageSaver setDirectoryName(String directoryName) {
-        this.directoryName = directoryName;
-        return this;
-    }
 
     public void save(Bitmap bitmapImage, String filename) {
 
@@ -65,24 +57,16 @@ public class ImageSaver {
     @NonNull
     private File createFile() {
         File directory;
-        if(external){
-            directory = getAlbumStorageDir(directoryName);
-        }
-        else {
-            directory = context.getDir(directoryName, Context.MODE_PRIVATE);
-        }
+
+        directory = context.getFilesDir();
+
 
         return new File(directory, fileName);
     }
 
     private File createFile2(String diretorio, String file) {
-        File directory;
-        if(external){
-            directory = getAlbumStorageDir(diretorio);
-        }
-        else {
-            directory = context.getDir(diretorio, Context.MODE_PRIVATE);
-        }
+
+        File directory = context.getFilesDir();
 
         return new File(directory, file);
     }

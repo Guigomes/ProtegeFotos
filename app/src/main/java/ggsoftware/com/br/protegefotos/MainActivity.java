@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent it = new Intent(MainActivity.this, SampleConfirmPatternActivity.class);
             startActivityForResult(it, CONFERIR_SENHA);
-           
+
         } else if (listaPastas.size() == 0) {
             Intent it = new Intent(MainActivity.this,
                     SampleSetPatternActivity.class);
@@ -126,9 +126,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static boolean isModoMisto() {
-
-        return sharedPreferences.getBoolean("isModoMisto", false);
-
+if(sharedPreferences != null) {
+    return sharedPreferences.getBoolean("isModoMisto", false);
+}else{
+    return  false;
+}
     }
 
     public static void setModoMisto(boolean isModoMisto) {

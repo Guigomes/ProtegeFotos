@@ -28,6 +28,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/share"
+        android:actionProviderClass="android.widget.ShareActionProvider"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="Share"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_alterar_nome_pasta"
         android:orderInCategory="200"
         android:title="@string/btn_alterar_nome_pasta"
