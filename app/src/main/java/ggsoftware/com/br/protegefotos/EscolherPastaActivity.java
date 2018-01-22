@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +46,7 @@ public class EscolherPastaActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+/*
                 AlertDialog.Builder builder = new AlertDialog.Builder(EscolherPastaActivity.this);
                 builder.setTitle(getString(R.string.txt_informe_nome_pasta));
 
@@ -53,7 +54,19 @@ public class EscolherPastaActivity extends AppCompatActivity {
                 final EditText input = new EditText(EscolherPastaActivity.this);
 
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+
                 input.setTextColor(Color.BLACK);
+                final CharSequence[] items = { " HDMI IN ", " AV IN" };
+
+                final int inputSelection = 0;
+                builder.setSingleChoiceItems(items,0,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+
+
+                            }
+                        });
                 builder.setView(input);
 
                 builder.setPositiveButton(getString(R.string.btn_criar_pasta), new DialogInterface.OnClickListener() {
@@ -77,10 +90,37 @@ public class EscolherPastaActivity extends AppCompatActivity {
                 });
 
                 builder.show();
-
+*/
                 /*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
+                final AlertDialog dialog;
+
+                final View alertDialogView = LayoutInflater.from(EscolherPastaActivity.this).inflate
+                        (R.layout.dialog_nova_pasta, null);
+                final View titleView = LayoutInflater.from(EscolherPastaActivity.this).inflate(R.layout.dialog_nova_pasta_title, null);
+
+                dialog = new AlertDialog.Builder(EscolherPastaActivity.this)
+                        .setView(alertDialogView)
+                        .setCustomTitle(titleView)
+                        .setPositiveButton(R.string.btn_criar_pasta, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                m_Text = ((EditText) alertDialogView.findViewById(R.id.edtNomeNovaPasta)).getText().toString();
+if(m_Text != null && !m_Text.isEmpty()) {
+    Intent it = new Intent(EscolherPastaActivity.this, SampleSetPatternActivity.class);
+
+    it.putExtra("idPasta", -1);
+    it.putExtra("nomePasta", m_Text);
+    startActivityForResult(it, MainActivity.CRIAR_NOVA_SENHA);
+}else{
+    Toast.makeText(EscolherPastaActivity.this, R.string.msg_erro_criar_pasta_sem_nome, Toast.LENGTH_SHORT).show();
+}
+                            }
+                        })
+                        .setCancelable(true)
+                        .create();
+                        dialog.show();
             }
         });
 

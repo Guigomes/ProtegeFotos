@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ProtegeFotos.iml" filepath="$PROJECT_DIR$/ProtegeFotos.iml" />
       <module fileurl="file:///bbptt/Documentos/ProtegeFotos/ProtegeFotos.iml" filepath="/bbptt/Documentos/ProtegeFotos/ProtegeFotos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ProtegeFotos.iml" filepath="$PROJECT_DIR$/ProtegeFotos.iml" />
+      <module fileurl="file:///bb/Mobile/Nativo/ProtegeFotos/app/app.iml" filepath="/bb/Mobile/Nativo/ProtegeFotos/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file:///bbptt/Documentos/ProtegeFotos/app/app.iml" filepath="/bbptt/Documentos/ProtegeFotos/app/app.iml" />
     </modules>
